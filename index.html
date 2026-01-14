@@ -1,274 +1,341 @@
 <!DOCTYPE html>
-<html lang="en" class="">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stories</title>
-
-    <!-- Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Tailwind Config -->
-    <script>
-      tailwind.config = {
-        darkMode: "class",
-      };
-    </script>
-
-    <!-- Small custom styles -->
-    <style>
-      .filter-btn {
-        padding: 0.5rem 1rem;
-        border-radius: 9999px;
-        font-size: 0.875rem;
-        background-color: rgb(243 244 246);
-        white-space: nowrap;
-      }
-      .filter-btn.active {
-        background-color: black;
-        color: white;
-      }
-      /* Make hero full-screen height on mobile for max immersion */
-      @media (max-width: 768px) {
-        .hero-video {
-          height: 100vh !important;
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stories • Erotic Tales</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          animation: { 'fade-in': 'fadeIn 0.6s ease-out' },
+          keyframes: {
+            fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
+          }
         }
       }
-    </style>
-  </head>
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .page { display: none; opacity: 0; transition: opacity 0.4s ease; }
+    .page.active { display: block; opacity: 1; }
+    .card-hover { transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .card-hover:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25) !important; }
+    .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .dark .glass { background: rgba(31,41,55,0.7); }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 text-gray-900 dark:text-gray-100 min-h-screen font-sans transition-colors duration-300">
 
-  <body
-    class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 transition-colors"
-  >
-    <!-- HEADER -->
-    <header
-      class="bg-white/80 dark:bg-gray-800/80 backdrop-blur border-b dark:border-gray-700 sticky top-0 z-50"
-    >
-      <div
-        class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center"
-      >
-        <div class="flex items-center gap-3">
-          <div
-            class="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-400 to-pink-500 flex items-center justify-center text-white font-bold"
-          >
-            S
-          </div>
-          <span class="text-lg font-semibold">Stories</span>
+  <!-- Navigation -->
+  <header class="sticky top-0 z-50 glass border-b border-gray-200/50 dark:border-gray-800/50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+          S
         </div>
+        <span class="text-xl font-semibold tracking-tight">Stories</span>
+      </div>
 
-        <div class="flex items-center gap-3">
-          <button
-            id="themeToggle"
-            class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center"
-          >
-            🌙
-          </button>
+      <div class="flex items-center gap-4">
+        <button id="themeToggle" class="w-10 h-10 rounded-full bg-white/80 dark:bg-gray-800/80 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition shadow-sm">
+          🌙
+        </button>
+
+        <div id="authArea">
+          <!-- Filled by JS -->
         </div>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <!-- FEATURED HERO - Now portrait video background for mobile optimization -->
-    <section class="relative hero-video h-[420px] md:h-screen overflow-hidden">
-      <div class="relative rounded-3xl md:rounded-none overflow-hidden h-full">
-        <!-- Portrait NSFW video background (spicy redhead solo - fits the erotic theme, portrait for mobile) -->
-        <!-- Direct HD MP4 from RedGifs (publicly accessible) -->
-        <video
-          autoplay
-          muted
-          loop
-          playsinline
-          class="absolute inset-0 w-full h-full object-cover md:object-contain bg-black"
-        >
-          <source src="story2.mp4" type="video/mp4" />
+  <!-- Pages -->
+  <main id="app" class="min-h-[calc(100vh-80px)]">
+
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="page flex items-center justify-center px-6 py-16">
+      <div class="w-full max-w-md glass rounded-3xl shadow-2xl p-10 border border-gray-100/50 dark:border-gray-700/50 animate-fade-in">
+        <h2 class="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">Welcome Back</h2>
+        <p class="text-center text-gray-500 dark:text-gray-400 mb-8">Sign in to unlock all stories</p>
+        
+        <form id="loginForm" class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium mb-2">Username</label>
+            <input type="text" id="username" class="w-full px-5 py-3.5 rounded-xl bg-white/60 dark:bg-gray-700/60 border border-gray-300/70 dark:border-gray-600/70 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition" placeholder="admin" required>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">Password</label>
+            <input type="password" id="password" class="w-full px-5 py-3.5 rounded-xl bg-white/60 dark:bg-gray-700/60 border border-gray-300/70 dark:border-gray-600/70 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition" placeholder="••••••" required>
+          </div>
+          <button type="submit" class="w-full py-4 bg-gradient-to-r from-rose-600 to-pink-600 text-white rounded-xl font-medium hover:from-rose-700 hover:to-pink-700 transition shadow-lg transform hover:scale-[1.02] active:scale-95">
+            Sign In
+          </button>
+        </form>
+        <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-8">
+          Demo: <strong>admin</strong> / <strong>admin</strong>
+        </p>
+      </div>
+    </div>
+
+    <!-- LANDING PAGE -->
+    <div id="landingPage" class="page">
+
+      <!-- Hero -->
+      <section id="hero" class="relative h-[70vh] min-h-[500px] md:h-screen overflow-hidden">
+        <video id="heroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover bg-black transition-transform duration-[20s] hover:scale-105">
+          <source src="" type="video/mp4">
         </video>
-
-        <!-- Dark overlay for text readability -->
-        <div
-          class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/40"
-        ></div>
-
-        <!-- Content centered, better on mobile -->
-        <div
-          class="absolute inset-0 flex flex-col justify-end pb-12 px-8 text-white text-center md:text-left md:max-w-2xl md:ml-8"
-        >
-          <span
-            class="inline-flex items-center gap-2 bg-white/20 backdrop-blur px-3 py-1 rounded-full text-xs mb-4 mx-auto md:mx-0"
-          >
-            ● HOT FEATURED STORY
-          </span>
-
-          <h1 class="text-3xl md:text-5xl font-bold mb-3">
-            Brother-in-law catches my husband fucking me from behind... (Part 1
-            & 2)
-          </h1>
-
-          <p class="text-gray-200 mb-6 text-sm md:text-base">
-            A forbidden holiday affair escalates from Thanksgiving voyeurism to
-            Christmas passion.
-          </p>
-
-          <div
-            class="flex flex-col md:flex-row items-center gap-4 justify-center md:justify-start"
-          >
-            <div class="flex items-center gap-2 text-sm">
-              <img
-                src="https://i.pravatar.cc/40"
-                class="w-8 h-8 rounded-full"
-              />
-              <span>Anonymous • 10 min read</span>
-            </div>
-
-            <button
-              onclick="document.getElementById('fullStory').scrollIntoView({behavior: 'smooth'})"
-              class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full font-medium flex items-center gap-2"
-            >
-              ▶ Read Full Story
+        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent/30"></div>
+        
+        <div class="relative h-full max-w-7xl mx-auto px-6 flex flex-col justify-end pb-16 md:pb-24">
+          <div id="heroContent" class="max-w-3xl text-white drop-shadow-lg">
+            <span class="inline-block bg-rose-600/80 backdrop-blur-md px-5 py-1.5 rounded-full text-sm font-semibold mb-5">● TRENDING</span>
+            <h1 id="heroTitle" class="text-4xl md:text-6xl font-extrabold leading-tight mb-5"></h1>
+            <p id="heroSubtitle" class="text-lg md:text-2xl text-gray-200 mb-10 max-w-xl"></p>
+            <button id="readFeaturedBtn" class="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white px-10 py-5 rounded-full font-semibold text-lg shadow-xl transition transform hover:scale-105 active:scale-95">
+              Read Full Story →
             </button>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- LATEST STORY -->
-    <section class="max-w-7xl mx-auto px-6 mt-14">
-      <h2 class="text-2xl font-semibold mb-6 text-center md:text-left">
-        The Full Story
-      </h2>
-
-      <!-- STORY CARD -->
-      <article
-        id="fullStory"
-        class="story-card bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow"
-        data-category="erotica"
-      >
-        <!-- Thanksgiving image -->
-        <img
-          src="https://thumbs.dreamstime.com/b/delicious-thanksgiving-dinner-table-roasted-turkey-seasonal-decor-cozy-thanksgiving-dinner-setup-roasted-turkey-425226209.jpg"
-          class="h-64 w-full object-cover"
-        />
-
-        <div class="p-6">
-          <span
-            class="inline-block bg-red-100 dark:bg-red-900 px-3 py-1 rounded-full text-xs mb-3 text-red-800 dark:text-red-200"
-          >
-            EROTICA - PART 1
-          </span>
-
-          <h3 class="text-xl font-semibold mb-2">
-            Brother-in-law catches my husband fucking me from behind... then I
-            show him what he's missing
-          </h3>
-
-          <p
-            class="text-gray-600 dark:text-gray-400 mb-4 whitespace-pre-line text-lg leading-relaxed"
-          >
-            Thanksgiving weekend, whole family crammed into our house.
-            Everyone's stuffed from dinner and finally crashes out early—kids
-            downstairs, parents in the guest rooms. Me and my husband slip into
-            our bedroom around 11, door not fully shut because we're thinking
-            everyone's out cold. He's got me bent over the bed, pounding me hard
-            from behind. My ass is up, tits swinging under me in this loose
-            nightie, and I'm trying to keep quiet but moaning into the pillow
-            every time he slams in deep. He's grabbing my hips, going faster,
-            telling me how wet I am. Then I hear the floor creak. Look up—my
-            brother-in-law is in the doorway. He's my husband's younger brother,
-            taller, more built from the gym, always got that cocky grin. Wearing
-            just boxer briefs and a t-shirt, you can see the outline of him
-            getting hard already. He's got that athletic tight body, unlike my
-            husband's dad bod. He sees us—me getting railed, ass bouncing,
-            husband oblivious—and he doesn't move. Just stands there, leaning
-            against the frame, eyes locked on me. I should've said something,
-            but fuck, it turned me on more. I push back harder on my husband,
-            moan a little louder, stare right at him while biting my lip.
-            Brother-in-law smirks, adjusts himself through the boxers—dick
-            getting bigger, straining the fabric. He pulls the waistband down
-            slow, lets it spring out. Thick, veiny, bigger than my husband's.
-            Starts stroking slow while watching my tits bounce and my ass jiggle
-            with every thrust. I arch my back more, spread my legs a bit so he
-            gets a better view of everything. Husband thinks it's for him, grabs
-            my hair and goes harder. "You like that?" he grunts. I nod, but I'm
-            looking at his brother jerking off in the doorway. Brother-in-law
-            speeds up, thumb over the tip, eyes on my pussy getting fucked. He
-            tenses, shoots ropes onto the hallway floor quiet as hell, then
-            tucks back in and slips away with a wink. Next morning, all the
-            family bullshit—football on TV, leftovers, everyone hanging out.
-            Brother-in-law keeps "accidentally" brushing against me in the
-            kitchen, hand on my lower back, pressing that bulge against my ass
-            when no one's looking. Wearing gray sweatpants that show everything.
-            Afternoon, husband passes out on the couch with a beer gut full.
-            Family's out walking the dog or whatever. I'm in the laundry room
-            folding shit when brother-in-law walks in, shuts the door behind
-            him. No words. He turns me around, pushes me down to my knees on the
-            soft rug. Pulls those sweatpants down—dick already hard, bigger up
-            close, throbbing. "I've been thinking about your mouth all night,"
-            he says low. I don't hesitate. Take him deep right away—thicker than
-            my husband, stretches my lips. He's got better control, guides my
-            head slow at first, then deeper. Tongue feels amazing swirling
-            around him, hands in my hair not too rough. I go sloppy on purpose,
-            like I do for my husband, but he pulls me off, makes me slow down,
-            edge him. "Fuck, you're better at this than I imagined," he groans.
-            I look up, take him all the way—no gag, swallow around him. He
-            thrusts a little, fucks my mouth steady. I play with his balls, feel
-            them tighten. He warns me he's close. I just suck harder, hum around
-            him. He grabs my head, pushes deep, unloads straight down my
-            throat—hot, thick, more than my husband ever. I swallow every drop,
-            milk him clean, lick the tip after. He pulls up his pants, smacks my
-            ass light. "Best Thanksgiving yet." Walks out like nothing happened.
-          </p>
-
-          <!-- Christmas image -->
-          <img
-            src="https://images.stockcake.com/public/7/6/5/76522662-fca3-46a4-97f8-afc589214790_large/family-christmas-gathering-stockcake.jpg"
-            class="h-64 w-full object-cover my-8 rounded-xl"
-          />
-
-          <span
-            class="inline-block bg-red-100 dark:bg-red-900 px-3 py-1 rounded-full text-xs mb-3 text-red-800 dark:text-red-200"
-          >
-            EROTICA - PART 2
-          </span>
-
-          <p
-            class="text-gray-600 dark:text-gray-400 mb-4 whitespace-pre-line text-lg leading-relaxed"
-          >
-            Two weeks after Thanksgiving, Jake's texts have me dripping—dick
-            pics from the gym, me sending back my wet fingers. Christmas hits,
-            family's back in the house. He hugs me too tight, hand low, bulge
-            pressing. Night two, everyone out for lights. I fake sick, he stays.
-            Door locks, he's shoving me against it, tongue down my throat, hands
-            yanking leggings off—no panties. Drops to his knees, spreads my ass,
-            tongue on my pussy from behind. Licks slow, flicks clit, fingers
-            deep. I'm grinding, biting my arm, coming on his face. He stands,
-            cock out—thick, leaking. Pushes in slow, stretches me full. Starts
-            thrusting deep, hands on hips, balls slapping. "So tight," he
-            groans. I arch, tits bouncing in the mirror, pushing back. Reaches
-            around, rubs clit fast. I clench, come hard shaking. He flips me,
-            lifts against wall—legs around him, fucks standing, biting my neck.
-            "Tell me I'm better," he growls. "You are," I gasp. Throws me on
-            bed, missionary—deep pounds, hand light on throat, pinching nipples.
-            I come again, squeezing him. Pulls out, straddles chest,
-            strokes—ropes hot on my tits. I rub it in, lick fingers. Family's
-            back soon. He smacks my ass: "Tonight, after sleep." Merry fucking
-            Christmas.
-          </p>
+      <!-- Stories Grid -->
+      <section class="max-w-7xl mx-auto px-6 py-16 md:py-24">
+        <div class="flex items-center justify-between mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold">Explore Stories</h2>
+          <div id="loading" class="hidden animate-spin rounded-full h-8 w-8 border-b-2 border-rose-600"></div>
         </div>
-      </article>
-    </section>
+        <div id="storiesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+      </section>
+    </div>
 
-    <!-- JS -->
-    <script>
-      // DARK MODE
-      const toggle = document.getElementById("themeToggle");
-      const html = document.documentElement;
+    <!-- STORY DETAIL PAGE -->
+    <div id="storyPage" class="page">
+      <section class="max-w-4xl mx-auto px-6 py-12 md:py-20">
+        <button id="backBtn" class="mb-10 text-rose-600 hover:text-rose-700 font-medium flex items-center gap-2 transition hover:translate-x-1">
+          ← Back to Stories
+        </button>
 
-      if (localStorage.theme === "dark") {
-        html.classList.add("dark");
+        <div class="rounded-3xl overflow-hidden shadow-2xl mb-12">
+          <video id="storyVideo" autoplay muted loop playsinline class="w-full h-[400px] md:h-[600px] object-cover bg-black">
+          </video>
+        </div>
+
+        <div class="prose dark:prose-invert prose-lg max-w-none prose-headings:text-rose-600 dark:prose-headings:text-rose-400">
+          <h1 id="storyTitle" class="text-4xl md:text-5xl font-bold mb-4"></h1>
+          <p id="storySubtitle" class="text-xl text-gray-600 dark:text-gray-300 mb-8 italic"></p>
+          
+          <div class="flex flex-wrap items-center gap-6 text-sm text-gray-500 dark:text-gray-400 mb-12 border-b border-gray-200 dark:border-gray-700 pb-6">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-bold shadow-md">A</div>
+              <div>
+                <span id="storyAuthor" class="font-medium block"></span>
+                <span class="text-xs">Author</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span id="storyReadTime"></span>
+            </div>
+          </div>
+
+          <div id="storyContent" class="leading-relaxed"></div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <script>
+    // ────────────────────────────────────────────────
+    // State
+    // ────────────────────────────────────────────────
+    let stories = [];
+    let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const pages = {
+      login: document.getElementById("loginPage"),
+      landing: document.getElementById("landingPage"),
+      story: document.getElementById("storyPage")
+    };
+
+    // ────────────────────────────────────────────────
+    // Theme
+    // ────────────────────────────────────────────────
+    const html = document.documentElement;
+    const themeToggle = document.getElementById("themeToggle");
+    if (localStorage.theme === "dark" || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      html.classList.add("dark");
+    }
+    themeToggle.addEventListener("click", () => {
+      html.classList.toggle("dark");
+      localStorage.theme = html.classList.contains("dark") ? "dark" : "light";
+    });
+
+    // ────────────────────────────────────────────────
+    // Auth UI
+    // ────────────────────────────────────────────────
+    function updateAuthUI() {
+      const area = document.getElementById("authArea");
+      if (isLoggedIn) {
+        area.innerHTML = `
+          <div class="flex items-center gap-4">
+            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Hi, Admin</span>
+            <button id="logoutBtn" class="px-5 py-2 bg-gray-200 dark:bg-gray-700 rounded-full text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+              Logout
+            </button>
+          </div>
+        `;
+        document.getElementById("logoutBtn")?.addEventListener("click", () => {
+          localStorage.removeItem("isLoggedIn");
+          isLoggedIn = false;
+          location.reload();
+        });
+      } else {
+        area.innerHTML = `
+          <button id="loginBtn" class="px-6 py-2.5 bg-gradient-to-r from-rose-600 to-pink-600 text-white rounded-full font-medium hover:from-rose-700 hover:to-pink-700 transition shadow-md">
+            Sign In
+          </button>
+        `;
+        document.getElementById("loginBtn")?.addEventListener("click", () => showPage("login"));
+      }
+    }
+    updateAuthUI();
+
+    // ────────────────────────────────────────────────
+    // Router
+    // ────────────────────────────────────────────────
+    function showPage(pageId, storyId = null) {
+      if (!isLoggedIn && pageId !== "login") {
+        showPage("login");
+        return;
       }
 
-      toggle.addEventListener("click", () => {
-        html.classList.toggle("dark");
-        localStorage.theme = html.classList.contains("dark") ? "dark" : "light";
-      });
-    </script>
-  </body>
+      Object.values(pages).forEach(p => p.classList.remove("active"));
+      setTimeout(() => {
+        pages[pageId].classList.add("active");
+        if (pageId === "story" && storyId) loadStory(storyId);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100);
+    }
+
+    // ────────────────────────────────────────────────
+    // Login
+    // ────────────────────────────────────────────────
+    document.getElementById("loginForm")?.addEventListener("submit", e => {
+      e.preventDefault();
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
+
+      if (user === "admin" && pass === "admin") {
+        localStorage.setItem("isLoggedIn", "true");
+        isLoggedIn = true;
+        updateAuthUI();
+        showPage("landing");
+      } else {
+        alert("Invalid credentials");
+      }
+    });
+
+    if (!isLoggedIn) {
+      showPage("login");
+    } else {
+      showPage("landing");
+    }
+
+    // ────────────────────────────────────────────────
+    // Load Stories
+    // ────────────────────────────────────────────────
+    async function loadStories() {
+      const loading = document.getElementById("loading");
+      loading.classList.remove("hidden");
+
+      try {
+        const res = await fetch("stories.json");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        stories = await res.json();
+
+        const featured = stories[0];
+        document.getElementById("heroTitle").textContent = featured.title;
+        document.getElementById("heroSubtitle").textContent = featured.subtitle;
+        const src = document.getElementById("heroVideo").querySelector("source");
+        if (featured.heroVideo) {
+          src.src = featured.heroVideo;
+          document.getElementById("heroVideo").load();
+        }
+        document.getElementById("readFeaturedBtn").onclick = () => showPage("story", featured.id);
+
+        const grid = document.getElementById("storiesGrid");
+        grid.innerHTML = "";
+        stories.forEach(story => {
+          const card = document.createElement("div");
+          card.className = "glass rounded-2xl overflow-hidden shadow-xl card-hover cursor-pointer border border-gray-200/30 dark:border-gray-700/30";
+          card.innerHTML = `
+            <div class="h-56 overflow-hidden">
+              <img src="${story.images?.[0] || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87'}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110" alt="">
+            </div>
+            <div class="p-6">
+              <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3 ${
+                story.category === 'erotica' ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-200' : 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-200'
+              }">
+                ${story.category.toUpperCase()}
+              </span>
+              <h3 class="text-xl font-semibold mb-3 line-clamp-2">${story.title}</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-5">${story.tldr || story.subtitle}</p>
+              <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+                <span>${story.author}</span>
+                <span class="flex items-center gap-1.5">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  ${story.readTime}
+                </span>
+              </div>
+            </div>
+          `;
+          card.onclick = () => showPage("story", story.id);
+          grid.appendChild(card);
+        });
+      } catch (err) {
+        console.error(err);
+        document.getElementById("storiesGrid").innerHTML = `<p class="col-span-full text-center py-20 text-red-600 dark:text-red-400">Failed to load stories. Please try again later.</p>`;
+      } finally {
+        loading.classList.add("hidden");
+      }
+    }
+
+    function loadStory(id) {
+      const story = stories.find(s => s.id === id);
+      if (!story) return showPage("landing");
+
+      document.getElementById("storyTitle").textContent = story.title;
+      document.getElementById("storySubtitle").textContent = story.subtitle;
+      document.getElementById("storyAuthor").textContent = story.author;
+      document.getElementById("storyReadTime").textContent = story.readTime;
+
+      const video = document.getElementById("storyVideo");
+      video.innerHTML = story.heroVideo ? `<source src="${story.heroVideo}" type="video/mp4">` : "";
+      if (story.heroVideo) video.load();
+
+      let html = story.content
+        .split('\n\n')
+        .map(p => `<p class="mb-6">${p.trim()}</p>`)
+        .join('');
+
+      if (story.images?.length) {
+        story.images.forEach(src => {
+          html += `<img src="${src}" class="rounded-2xl my-10 shadow-xl w-full object-cover max-h-[500px]" alt="Scene">`;
+        });
+      }
+
+      document.getElementById("storyContent").innerHTML = html;
+    }
+
+    document.getElementById("backBtn")?.addEventListener("click", () => showPage("landing"));
+
+    // Init
+    loadStories();
+  </script>
+</body>
 </html>

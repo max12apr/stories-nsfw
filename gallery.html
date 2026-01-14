@@ -1,196 +1,314 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Media Gallery</title>
+  <title>NSFW Media Gallery</title>
   <style>
+    :root {
+      --bg: #0f0f0f;
+      --card: #1a1a1a;
+      --text: #e0e0e0;
+      --accent: #bb86fc;
+    }
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #111;
-      color: #eee;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
       margin: 0;
-      padding: 20px;
+      padding: 24px 16px;
+      min-height: 100vh;
     }
     h1 {
       text-align: center;
-      margin-bottom: 30px;
+      margin: 0 0 2rem;
+      font-weight: 500;
+      letter-spacing: -0.5px;
     }
     .gallery {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 16px;
-      max-width: 1400px;
+      max-width: 1600px;
       margin: 0 auto;
     }
     .item {
-      background: #222;
-      border-radius: 8px;
+      background: var(--card);
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-      transition: transform 0.15s ease;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      transition: all 0.18s ease;
       cursor: pointer;
-    }
-    .item:hover {
-      transform: scale(1.04);
-    }
-    .item img, .item video {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      display: block;
-    }
-    .caption {
-      padding: 10px;
-      font-size: 0.9rem;
-      text-align: center;
-    }
-    .video-placeholder {
+      aspect-ratio: 3 / 4;          /* ← prevents jump */
       position: relative;
     }
-    .video-placeholder::after {
-      content: "▶";
+    .item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.7), 0 0 0 1px rgba(187,134,252,0.12);
+    }
+    .media-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    .media-container img, .media-container video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .item:hover .media-container img,
+    .item:hover .media-container video {
+      transform: scale(1.06);
+    }
+    .video-overlay {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 4rem;
-      color: rgba(255,255,255,0.7);
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: opacity 0.2s;
       pointer-events: none;
     }
+    .item:hover .video-overlay { opacity: 1; }
+    .play-icon {
+      font-size: 4.5rem;
+      color: white;
+      filter: drop-shadow(0 2px 8px black);
+    }
+    .caption {
+      position: absolute;
+      bottom: 0;
+      left: 0; right: 0;
+      padding: 12px 10px;
+      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
+      font-size: 0.9rem;
+      text-align: center;
+      opacity: 0.95;
+    }
 
-    /* Lightbox / modal */
+    /* ──────────────────────────────────────── */
+    /*               MODAL / LIGHTBOX           */
+    /* ──────────────────────────────────────── */
     .modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.95);
-      z-index: 1000;
+      background: rgba(0,0,0,0.96);
+      z-index: 9999;
       align-items: center;
       justify-content: center;
+      backdrop-filter: blur(4px);
     }
     .modal-content {
-      max-width: 95%;
-      max-height: 95vh;
       position: relative;
+      max-width: 96vw;
+      max-height: 96vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    .modal img, .modal video {
+    .modal-media {
       max-width: 100%;
-      max-height: 90vh;
+      max-height: 82vh;
       object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 0 60px rgba(0,0,0,0.8);
+    }
+    .modal-caption {
+      margin-top: 1rem;
+      font-size: 1.05rem;
+      max-width: 90%;
+      text-align: center;
+      color: #ccc;
     }
     .close {
       position: absolute;
-      top: 15px;
-      right: 25px;
+      top: 20px;
+      right: 30px;
+      font-size: 48px;
       color: white;
-      font-size: 40px;
-      font-weight: bold;
       cursor: pointer;
+      text-shadow: 0 2px 8px black;
+      z-index: 10000;
+    }
+    .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 3.5rem;
+      color: rgba(255,255,255,0.7);
+      cursor: pointer;
+      user-select: none;
+      padding: 20px;
+    }
+    .prev { left: 20px; }
+    .next { right: 20px; }
+    .loading {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: #888;
     }
   </style>
 </head>
 <body>
-
   <h1>NSFW Media Gallery</h1>
-
   <div class="gallery" id="gallery"></div>
 
-  <!-- Modal / Lightbox -->
+  <!-- Modal -->
   <div class="modal" id="modal">
-    <span class="close" id="close">&times;</span>
-    <div class="modal-content" id="modalContent"></div>
+    <span class="close" id="close">×</span>
+    <div class="modal-content" id="modalContent">
+      <div class="loading" id="modalLoading">Loading…</div>
+    </div>
   </div>
 
   <script>
-    // Load media.json and build gallery
+    let mediaItems = [];
+    let currentIndex = -1;
+
+    // ─── Load data ────────────────────────────────────────
     fetch('media.json')
-      .then(response => {
-        if (!response.ok) throw new Error('Could not load media.json');
-        return response.json();
+      .then(r => {
+        if (!r.ok) throw new Error("media.json not found or invalid");
+        return r.json();
       })
       .then(data => {
-        const gallery = document.getElementById('gallery');
-        data.forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'item';
-
-          let mediaElement;
-          if (item.type === 'video' || (item.url && item.url.endsWith('.mp4'))) {
-            // For videos: show thumbnail or poster + play icon overlay
-            mediaElement = document.createElement('div');
-            mediaElement.className = 'video-placeholder';
-            const thumb = document.createElement('img');
-            thumb.src = item.thumbnail || item.poster || 'https://via.placeholder.com/300x220?text=Video'; // fallback
-            thumb.alt = item.caption || 'Video';
-            mediaElement.appendChild(thumb);
-          } else {
-            // Image
-            mediaElement = document.createElement('img');
-            mediaElement.src = item.thumbnail || item.url || 'https://via.placeholder.com/300x220?text=Image';
-            mediaElement.alt = item.caption || 'Image';
-          }
-
-          div.appendChild(mediaElement);
-
-          if (item.caption) {
-            const cap = document.createElement('div');
-            cap.className = 'caption';
-            cap.textContent = item.caption;
-            div.appendChild(cap);
-          }
-
-          // Click to open in modal
-          div.addEventListener('click', () => openModal(item));
-
-          gallery.appendChild(div);
-        });
+        mediaItems = data;
+        buildGallery();
       })
       .catch(err => {
         console.error(err);
-        document.getElementById('gallery').innerHTML = '<p style="text-align:center;color:red;">Failed to load media. Check console.</p>';
+        document.getElementById('gallery').innerHTML = 
+          '<p style="text-align:center; color:#f55; padding:3rem;">Failed to load media</p>';
       });
 
-    // Modal functionality
+    function buildGallery() {
+      const gallery = document.getElementById('gallery');
+      gallery.innerHTML = '';
+
+      mediaItems.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.dataset.index = index;
+
+        const container = document.createElement('div');
+        container.className = 'media-container';
+
+        let mediaEl;
+        const isVideo = item.type === 'video' || item.url.toLowerCase().endsWith('.mp4') || item.url.toLowerCase().endsWith('.webm');
+
+        if (isVideo) {
+          mediaEl = document.createElement('img'); // using poster / first frame
+          mediaEl.src = item.poster || item.thumbnail || `https://via.placeholder.com/320x480/222/aaa?text=Video+${index+1}`;
+          mediaEl.loading = 'lazy';
+          mediaEl.alt = item.caption || 'Video';
+
+          const overlay = document.createElement('div');
+          overlay.className = 'video-overlay';
+          overlay.innerHTML = '<div class="play-icon">▶</div>';
+          container.appendChild(overlay);
+        } else {
+          mediaEl = document.createElement('img');
+          mediaEl.src = item.url;
+          mediaEl.loading = 'lazy';
+          mediaEl.alt = item.caption || 'Image';
+        }
+
+        container.appendChild(mediaEl);
+
+        if (item.caption) {
+          const cap = document.createElement('div');
+          cap.className = 'caption';
+          cap.textContent = item.caption;
+          container.appendChild(cap);
+        }
+
+        div.appendChild(container);
+        div.addEventListener('click', () => openModal(index));
+        gallery.appendChild(div);
+      });
+    }
+
+    // ─── Modal logic ──────────────────────────────────────
     const modal = document.getElementById('modal');
     const modalContent = document.getElementById('modalContent');
+    const modalLoading = document.getElementById('modalLoading');
     const closeBtn = document.getElementById('close');
 
-    function openModal(item) {
-      modalContent.innerHTML = ''; // clear previous
+    function openModal(index) {
+      if (index < 0 || index >= mediaItems.length) return;
+      currentIndex = index;
+      const item = mediaItems[index];
+
+      modalLoading.style.display = 'flex';
+      modalContent.innerHTML = ''; // clear
+
+      const isVideo = item.type === 'video' || item.url.toLowerCase().match(/\.(mp4|webm)$/i);
+
       let el;
-      if (item.type === 'video' || (item.url && item.url.endsWith('.mp4'))) {
+      if (isVideo) {
         el = document.createElement('video');
+        el.src = item.url;
         el.controls = true;
         el.autoplay = true;
-        el.src = item.url;
+        el.loop = false;
+        el.muted = false;
       } else {
         el = document.createElement('img');
-        el.src = item.url || item.full || item.thumbnail;
+        el.src = item.url;
+        el.className = 'modal-media';
       }
+      el.className = 'modal-media';
+      el.onload = el.onloadeddata = () => { modalLoading.style.display = 'none'; };
+      el.onerror = () => {
+        modalLoading.textContent = 'Media failed to load';
+      };
+
       modalContent.appendChild(el);
+
+      // Caption in modal
+      if (item.caption) {
+        const cap = document.createElement('div');
+        cap.className = 'modal-caption';
+        cap.textContent = item.caption;
+        modalContent.appendChild(cap);
+      }
+
       modal.style.display = 'flex';
     }
 
-    closeBtn.onclick = () => {
-      modal.style.display = 'none';
-      modalContent.innerHTML = '';
-    };
+    function changeMedia(delta) {
+      const newIdx = currentIndex + delta;
+      if (newIdx >= 0 && newIdx < mediaItems.length) {
+        openModal(newIdx);
+      }
+    }
 
-    // Close on outside click or ESC
-    modal.onclick = (e) => {
-      if (e.target === modal) {
-        modal.style.display = 'none';
-        modalContent.innerHTML = '';
-      }
-    };
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        modal.style.display = 'none';
-        modalContent.innerHTML = '';
-      }
+    closeBtn.onclick = () => modal.style.display = 'none';
+    modal.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
+
+    document.addEventListener('keydown', e => {
+      if (modal.style.display !== 'flex') return;
+      if (e.key === 'Escape') modal.style.display = 'none';
+      if (e.key === 'ArrowLeft')  changeMedia(-1);
+      if (e.key === 'ArrowRight') changeMedia(+1);
+    });
+
+    // Very basic touch swipe support
+    let touchStartX = 0;
+    modal.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
+    modal.addEventListener('touchend', e => {
+      const diff = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) > 60) changeMedia(diff > 0 ? +1 : -1);
     });
   </script>
-
 </body>
 </html>

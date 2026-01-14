@@ -295,4 +295,54 @@
 
       let el;
       if (isVideo) {
-        el =
+        el = document.createElement('video');
+        el.src = item.url;
+        el.controls = true;
+        el.autoplay = true;
+        el.loop = false;
+        el.muted = false;           // allow sound in modal
+      } else {
+        el = document.createElement('img');
+        el.src = item.url;
+      }
+      el.className = 'modal-media';
+      el.onload = el.onloadeddata = () => { modalLoading.style.display = 'none'; };
+      el.onerror = () => { modalLoading.textContent = 'Failed to load media'; };
+
+      modalContent.appendChild(el);
+
+      if (item.caption) {
+        const cap = document.createElement('div');
+        cap.className = 'modal-caption';
+        cap.textContent = item.caption;
+        modalContent.appendChild(cap);
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function changeMedia(delta) {
+      const newIdx = currentIndex + delta;
+      if (newIdx >= 0 && newIdx < mediaItems.length) openModal(newIdx);
+    }
+
+    closeBtn.onclick = () => modal.style.display = 'none';
+    modal.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
+
+    document.addEventListener('keydown', e => {
+      if (modal.style.display !== 'flex') return;
+      if (e.key === 'Escape') modal.style.display = 'none';
+      if (e.key === 'ArrowLeft')  changeMedia(-1);
+      if (e.key === 'ArrowRight') changeMedia(1);
+    });
+
+    // Touch swipe
+    let touchStartX = 0;
+    modal.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX, { passive: true });
+    modal.addEventListener('touchend', e => {
+      const diff = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(diff) > 70) changeMedia(diff > 0 ? 1 : -1);
+    }, { passive: true });
+  </script>
+</body>
+</html>

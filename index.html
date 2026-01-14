@@ -21,19 +21,56 @@
   </script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    .page { display: none; opacity: 0; transition: opacity 0.4s ease; }
-    .page.active { display: block; opacity: 1; }
-    .card-hover { transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
-    .card-hover:hover { transform: translateY(-12px) scale(1.02); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25) !important; }
-    .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-    .dark .glass { background: rgba(31,41,55,0.7); }
+    :root {
+      --header-height: 80px;
+    }
+    body {
+      padding-top: 0 !important;
+    }
+    header {
+      height: var(--header-height);
+    }
+    main {
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
+    .page {
+      display: none !important;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.5s ease, visibility 0.5s step-end;
+      min-height: calc(100vh - var(--header-height));
+    }
+    .page.active {
+      display: block !important;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition: opacity 0.5s ease, visibility 0.5s step-start;
+    }
+    .card-hover {
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25) !important;
+    }
+    .glass {
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .dark .glass {
+      background: rgba(31,41,55,0.75);
+    }
   </style>
 </head>
 <body class="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 text-gray-900 dark:text-gray-100 min-h-screen font-sans transition-colors duration-300">
 
   <!-- Navigation -->
   <header class="sticky top-0 z-50 glass border-b border-gray-200/50 dark:border-gray-800/50">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
           S
@@ -46,18 +83,16 @@
           🌙
         </button>
 
-        <div id="authArea">
-          <!-- Filled by JS -->
-        </div>
+        <div id="authArea"></div>
       </div>
     </div>
   </header>
 
-  <!-- Pages -->
-  <main id="app" class="min-h-[calc(100vh-80px)]">
+  <!-- Main Content -->
+  <main id="app">
 
     <!-- LOGIN PAGE -->
-    <div id="loginPage" class="page flex items-center justify-center px-6 py-16">
+    <div id="loginPage" class="page flex items-center justify-center px-6">
       <div class="w-full max-w-md glass rounded-3xl shadow-2xl p-10 border border-gray-100/50 dark:border-gray-700/50 animate-fade-in">
         <h2 class="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">Welcome Back</h2>
         <p class="text-center text-gray-500 dark:text-gray-400 mb-8">Sign in to unlock all stories</p>
@@ -76,7 +111,7 @@
           </button>
         </form>
         <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-8">
-          Demo: <strong>admin</strong> / <strong>admin</strong>
+          Demo credentials: <strong>admin</strong> / <strong>admin</strong>
         </p>
       </div>
     </div>
@@ -85,7 +120,7 @@
     <div id="landingPage" class="page">
 
       <!-- Hero -->
-      <section id="hero" class="relative h-[70vh] min-h-[500px] md:h-screen overflow-hidden">
+      <section id="hero" class="relative h-[60vh] sm:h-[70vh] md:h-screen overflow-hidden mt-0 pt-0">
         <video id="heroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover bg-black transition-transform duration-[20s] hover:scale-105">
           <source src="" type="video/mp4">
         </video>
@@ -152,7 +187,7 @@
 
   <script>
     // ────────────────────────────────────────────────
-    // State
+    // State & Config
     // ────────────────────────────────────────────────
     let stories = [];
     let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
@@ -163,7 +198,7 @@
     };
 
     // ────────────────────────────────────────────────
-    // Theme
+    // Theme Toggle
     // ────────────────────────────────────────────────
     const html = document.documentElement;
     const themeToggle = document.getElementById("themeToggle");
@@ -206,7 +241,7 @@
     updateAuthUI();
 
     // ────────────────────────────────────────────────
-    // Router
+    // Router / Page Switch
     // ────────────────────────────────────────────────
     function showPage(pageId, storyId = null) {
       if (!isLoggedIn && pageId !== "login") {
@@ -214,16 +249,34 @@
         return;
       }
 
-      Object.values(pages).forEach(p => p.classList.remove("active"));
-      setTimeout(() => {
-        pages[pageId].classList.add("active");
-        if (pageId === "story" && storyId) loadStory(storyId);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }, 100);
+      // Hide everything first
+      Object.values(pages).forEach(page => {
+        page.classList.remove("active");
+        page.style.display = "none";
+        page.style.opacity = "0";
+        page.style.visibility = "hidden";
+      });
+
+      const target = pages[pageId];
+      if (!target) return;
+
+      target.style.display = "block";
+
+      requestAnimationFrame(() => {
+        target.classList.add("active");
+        target.style.opacity = "1";
+        target.style.visibility = "visible";
+
+        if (pageId === "story" && storyId) {
+          loadStory(storyId);
+        }
+
+        window.scrollTo({ top: 0, behavior: "instant" });
+      });
     }
 
     // ────────────────────────────────────────────────
-    // Login
+    // Login Handler
     // ────────────────────────────────────────────────
     document.getElementById("loginForm")?.addEventListener("submit", e => {
       e.preventDefault();
@@ -234,12 +287,20 @@
         localStorage.setItem("isLoggedIn", "true");
         isLoggedIn = true;
         updateAuthUI();
+
+        // Force hide login completely
+        pages.login.classList.remove("active");
+        pages.login.style.display = "none";
+        pages.login.style.opacity = "0";
+        pages.login.style.visibility = "hidden";
+
         showPage("landing");
       } else {
         alert("Invalid credentials");
       }
     });
 
+    // Initial page
     if (!isLoggedIn) {
       showPage("login");
     } else {
@@ -251,7 +312,7 @@
     // ────────────────────────────────────────────────
     async function loadStories() {
       const loading = document.getElementById("loading");
-      loading.classList.remove("hidden");
+      loading?.classList.remove("hidden");
 
       try {
         const res = await fetch("stories.json");
@@ -298,10 +359,10 @@
           grid.appendChild(card);
         });
       } catch (err) {
-        console.error(err);
-        document.getElementById("storiesGrid").innerHTML = `<p class="col-span-full text-center py-20 text-red-600 dark:text-red-400">Failed to load stories. Please try again later.</p>`;
+        console.error("Stories load error:", err);
+        document.getElementById("storiesGrid").innerHTML = `<p class="col-span-full text-center py-20 text-red-600 dark:text-red-400">Failed to load stories. Check stories.json</p>`;
       } finally {
-        loading.classList.add("hidden");
+        loading?.classList.add("hidden");
       }
     }
 
@@ -334,7 +395,7 @@
 
     document.getElementById("backBtn")?.addEventListener("click", () => showPage("landing"));
 
-    // Init
+    // Init data
     loadStories();
   </script>
 </body>

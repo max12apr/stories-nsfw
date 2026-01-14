@@ -23,7 +23,6 @@
       text-align: center;
       margin: 0 0 2rem;
       font-weight: 500;
-      letter-spacing: -0.5px;
     }
     .gallery {
       display: grid;
@@ -39,28 +38,38 @@
       box-shadow: 0 4px 16px rgba(0,0,0,0.5);
       transition: all 0.18s ease;
       cursor: pointer;
-      aspect-ratio: 3 / 4;          /* ← prevents jump */
+      aspect-ratio: 3 / 4;
       position: relative;
     }
     .item:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.7), 0 0 0 1px rgba(187,134,252,0.12);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.7), 0 0 0 1px rgba(187,134,252,0.15);
     }
     .media-container {
       width: 100%;
       height: 100%;
       position: relative;
       overflow: hidden;
+      background: #000;
     }
-    .media-container img, .media-container video {
+    .media-container img.poster,
+    .media-container video.preview {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.4s ease;
+      position: absolute;
+      inset: 0;
+      transition: opacity 0.25s ease;
     }
-    .item:hover .media-container img,
-    .item:hover .media-container video {
-      transform: scale(1.06);
+    .media-container video.preview {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .item:hover .media-container video.preview {
+      opacity: 1;
+    }
+    .item:hover .media-container img.poster {
+      opacity: 0;
     }
     .video-overlay {
       position: absolute;
@@ -68,40 +77,42 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(0,0,0,0.4);
-      opacity: 0;
-      transition: opacity 0.2s;
+      background: rgba(0,0,0,0.35);
+      opacity: 1;
+      transition: opacity 0.25s ease;
       pointer-events: none;
+      z-index: 2;
     }
-    .item:hover .video-overlay { opacity: 1; }
+    .item:hover .video-overlay {
+      opacity: 0;
+    }
     .play-icon {
-      font-size: 4.5rem;
+      font-size: 4.8rem;
       color: white;
-      filter: drop-shadow(0 2px 8px black);
+      filter: drop-shadow(0 3px 10px black);
     }
     .caption {
       position: absolute;
       bottom: 0;
       left: 0; right: 0;
-      padding: 12px 10px;
-      background: linear-gradient(to top, rgba(0,0,0,0.85), transparent);
-      font-size: 0.9rem;
+      padding: 14px 12px;
+      background: linear-gradient(to top, rgba(0,0,0,0.88), transparent);
+      font-size: 0.92rem;
       text-align: center;
+      z-index: 3;
       opacity: 0.95;
     }
 
-    /* ──────────────────────────────────────── */
-    /*               MODAL / LIGHTBOX           */
-    /* ──────────────────────────────────────── */
+    /* Modal ──────────────────────────────────────── */
     .modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.96);
+      background: rgba(0,0,0,0.97);
       z-index: 9999;
       align-items: center;
       justify-content: center;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(5px);
     }
     .modal-content {
       position: relative;
@@ -115,46 +126,46 @@
       max-width: 100%;
       max-height: 82vh;
       object-fit: contain;
-      border-radius: 8px;
-      box-shadow: 0 0 60px rgba(0,0,0,0.8);
+      border-radius: 10px;
+      box-shadow: 0 0 70px rgba(0,0,0,0.9);
     }
     .modal-caption {
-      margin-top: 1rem;
+      margin-top: 1.2rem;
       font-size: 1.05rem;
       max-width: 90%;
       text-align: center;
-      color: #ccc;
+      color: #ddd;
     }
     .close {
       position: absolute;
       top: 20px;
       right: 30px;
-      font-size: 48px;
+      font-size: 52px;
       color: white;
       cursor: pointer;
-      text-shadow: 0 2px 8px black;
+      text-shadow: 0 2px 10px black;
       z-index: 10000;
     }
     .nav-arrow {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 3.5rem;
-      color: rgba(255,255,255,0.7);
+      font-size: 4rem;
+      color: rgba(255,255,255,0.75);
       cursor: pointer;
+      padding: 24px;
       user-select: none;
-      padding: 20px;
     }
-    .prev { left: 20px; }
-    .next { right: 20px; }
+    .prev { left: 16px; }
+    .next { right: 16px; }
     .loading {
       position: absolute;
       inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.4rem;
-      color: #888;
+      font-size: 1.5rem;
+      color: #999;
     }
   </style>
 </head>
@@ -174,10 +185,9 @@
     let mediaItems = [];
     let currentIndex = -1;
 
-    // ─── Load data ────────────────────────────────────────
     fetch('media.json')
       .then(r => {
-        if (!r.ok) throw new Error("media.json not found or invalid");
+        if (!r.ok) throw new Error("media.json load failed");
         return r.json();
       })
       .then(data => {
@@ -187,7 +197,7 @@
       .catch(err => {
         console.error(err);
         document.getElementById('gallery').innerHTML = 
-          '<p style="text-align:center; color:#f55; padding:3rem;">Failed to load media</p>';
+          '<p style="text-align:center; color:#f66; padding:4rem;">Failed to load media</p>';
       });
 
     function buildGallery() {
@@ -202,28 +212,58 @@
         const container = document.createElement('div');
         container.className = 'media-container';
 
-        let mediaEl;
-        const isVideo = item.type === 'video' || item.url.toLowerCase().endsWith('.mp4') || item.url.toLowerCase().endsWith('.webm');
+        const isVideo = item.type === 'video' || /\.(mp4|webm)$/i.test(item.url);
 
         if (isVideo) {
-          mediaEl = document.createElement('img'); // using poster / first frame
-          mediaEl.src = item.poster || item.thumbnail || `https://via.placeholder.com/320x480/222/aaa?text=Video+${index+1}`;
-          mediaEl.loading = 'lazy';
-          mediaEl.alt = item.caption || 'Video';
+          // Poster image (shown by default)
+          const poster = document.createElement('img');
+          poster.className = 'poster';
+          poster.src = item.poster || item.thumbnail || `https://via.placeholder.com/320x480/111/555?text=Video+${index+1}`;
+          poster.alt = item.caption || 'Video thumbnail';
+          poster.loading = 'lazy';
+          container.appendChild(poster);
 
+          // Video preview (plays on hover)
+          const video = document.createElement('video');
+          video.className = 'preview';
+          video.muted = true;
+          video.loop = true;
+          video.playsInline = true;
+          video.preload = 'none';           // Important: don't load until hover
+          video.src = item.url;
+          container.appendChild(video);
+
+          // Play icon overlay
           const overlay = document.createElement('div');
           overlay.className = 'video-overlay';
           overlay.innerHTML = '<div class="play-icon">▶</div>';
           container.appendChild(overlay);
+
+          // Hover events
+          div.addEventListener('mouseenter', () => {
+            video.preload = 'auto';
+            video.play().catch(() => {});   // silent fail if blocked
+          });
+          div.addEventListener('mouseleave', () => {
+            video.pause();
+            video.currentTime = 0;          // reset to start
+          });
+
+          // Touch support (tap to preview)
+          div.addEventListener('touchstart', () => {
+            video.preload = 'auto';
+            video.play().catch(() => {});
+          }, { passive: true });
         } else {
-          mediaEl = document.createElement('img');
-          mediaEl.src = item.url;
-          mediaEl.loading = 'lazy';
-          mediaEl.alt = item.caption || 'Image';
+          // Image
+          const img = document.createElement('img');
+          img.src = item.url;
+          img.alt = item.caption || 'Image';
+          img.loading = 'lazy';
+          container.appendChild(img);
         }
 
-        container.appendChild(mediaEl);
-
+        // Caption
         if (item.caption) {
           const cap = document.createElement('div');
           cap.className = 'caption';
@@ -237,7 +277,7 @@
       });
     }
 
-    // ─── Modal logic ──────────────────────────────────────
+    // ─── Modal (full playback with sound/controls) ───
     const modal = document.getElementById('modal');
     const modalContent = document.getElementById('modalContent');
     const modalLoading = document.getElementById('modalLoading');
@@ -249,66 +289,10 @@
       const item = mediaItems[index];
 
       modalLoading.style.display = 'flex';
-      modalContent.innerHTML = ''; // clear
+      modalContent.innerHTML = '';
 
-      const isVideo = item.type === 'video' || item.url.toLowerCase().match(/\.(mp4|webm)$/i);
+      const isVideo = item.type === 'video' || /\.(mp4|webm)$/i.test(item.url);
 
       let el;
       if (isVideo) {
-        el = document.createElement('video');
-        el.src = item.url;
-        el.controls = true;
-        el.autoplay = true;
-        el.loop = false;
-        el.muted = false;
-      } else {
-        el = document.createElement('img');
-        el.src = item.url;
-        el.className = 'modal-media';
-      }
-      el.className = 'modal-media';
-      el.onload = el.onloadeddata = () => { modalLoading.style.display = 'none'; };
-      el.onerror = () => {
-        modalLoading.textContent = 'Media failed to load';
-      };
-
-      modalContent.appendChild(el);
-
-      // Caption in modal
-      if (item.caption) {
-        const cap = document.createElement('div');
-        cap.className = 'modal-caption';
-        cap.textContent = item.caption;
-        modalContent.appendChild(cap);
-      }
-
-      modal.style.display = 'flex';
-    }
-
-    function changeMedia(delta) {
-      const newIdx = currentIndex + delta;
-      if (newIdx >= 0 && newIdx < mediaItems.length) {
-        openModal(newIdx);
-      }
-    }
-
-    closeBtn.onclick = () => modal.style.display = 'none';
-    modal.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
-
-    document.addEventListener('keydown', e => {
-      if (modal.style.display !== 'flex') return;
-      if (e.key === 'Escape') modal.style.display = 'none';
-      if (e.key === 'ArrowLeft')  changeMedia(-1);
-      if (e.key === 'ArrowRight') changeMedia(+1);
-    });
-
-    // Very basic touch swipe support
-    let touchStartX = 0;
-    modal.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
-    modal.addEventListener('touchend', e => {
-      const diff = touchStartX - e.changedTouches[0].screenX;
-      if (Math.abs(diff) > 60) changeMedia(diff > 0 ? +1 : -1);
-    });
-  </script>
-</body>
-</html>
+        el =

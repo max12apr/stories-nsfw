@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NSFW Media Gallery</title>
+  <title>Video Gallery</title>
   <style>
     :root {
       --bg: #0f0f0f;
@@ -18,7 +18,11 @@
       padding: 24px 16px;
       min-height: 100vh;
     }
-    h1 { text-align: center; margin: 0 0 2rem; font-weight: 500; }
+    h1 { 
+      text-align: center; 
+      margin: 0 0 2rem; 
+      font-weight: 500; 
+    }
     .gallery {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -79,16 +83,6 @@
       color: white;
       filter: drop-shadow(0 3px 12px black);
     }
-    .caption {
-      position: absolute;
-      bottom: 0;
-      left: 0; right: 0;
-      padding: 14px;
-      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-      font-size: 0.9rem;
-      text-align: center;
-      z-index: 3;
-    }
 
     /* Modal */
     .modal {
@@ -135,7 +129,7 @@
   </style>
 </head>
 <body>
-  <h1>Media Gallery</h1>
+  <h1>Video Gallery</h1>
   <div class="gallery" id="gallery"></div>
 
   <div class="modal" id="modal">
@@ -154,18 +148,26 @@
         return response.json();
       })
       .then(data => {
-        mediaItems = data;
+        // Filter to show ONLY videos with videoURL
+        mediaItems = data.filter(item => 
+          item.type === 'video' && item.videoURL && item.videoURL.trim() !== ''
+        );
         buildGallery();
       })
       .catch(err => {
         console.error(err);
         document.getElementById('gallery').innerHTML = 
-          '<p style="text-align:center; color:#f66; padding:4rem;">Failed to load media.json</p>';
+          '<p style="text-align:center; color:#f66; padding:4rem;">Failed to load media.json or no videos found</p>';
       });
 
     function buildGallery() {
       const gallery = document.getElementById('gallery');
       gallery.innerHTML = '';
+
+      if (mediaItems.length === 0) {
+        gallery.innerHTML = '<p style="text-align:center; color:#aaa; padding:4rem;">No videos found in media.json</p>';
+        return;
+      }
 
       mediaItems.forEach((item, index) => {
         const div = document.createElement('div');
@@ -175,59 +177,55 @@
         const container = document.createElement('div');
         container.className = 'media-container';
 
-        // Preview image (shown by default for both images & videos)
+        // Preview image (thumbnail/poster)
         const img = document.createElement('img');
         img.className = 'preview-img';
-        img.src = item.imageURL || 'https://via.placeholder.com/320x480/222/aaa?text=No+Preview';
-        img.alt = `Media ${index + 1}`;
+        img.src = item.imageURL || 'https://via.placeholder.com/320x480/222/aaa?text=Video';
+        img.alt = `Video ${index + 1}`;
         img.loading = 'lazy';
         container.appendChild(img);
 
-        let videoEl = null;
-        if (item.type === 'video' && item.videoURL) {
-          videoEl = document.createElement('video');
-          videoEl.className = 'preview-video';
-          videoEl.muted = true;
-          videoEl.loop = true;
-          videoEl.playsInline = true;
-          videoEl.preload = 'none';
-          videoEl.src = item.videoURL;
-          container.appendChild(videoEl);
+        // Video preview on hover
+        const videoEl = document.createElement('video');
+        videoEl.className = 'preview-video';
+        videoEl.muted = true;
+        videoEl.loop = true;
+        videoEl.playsInline = true;
+        videoEl.preload = 'none';
+        videoEl.src = item.videoURL;
+        container.appendChild(videoEl);
 
-          // Hover/touch to play preview
-          const playOnEnter = () => {
-            videoEl.preload = 'auto';
-            videoEl.play().catch(() => {});
-          };
-          const stopOnLeave = () => {
-            videoEl.pause();
-            videoEl.currentTime = 0;
-          };
+        // Play hint overlay
+        const hint = document.createElement('div');
+        hint.className = 'play-hint';
+        hint.innerHTML = '<div class="play-icon">▶</div>';
+        container.appendChild(hint);
 
-          div.addEventListener('mouseenter', playOnEnter);
-          div.addEventListener('mouseleave', stopOnLeave);
-          div.addEventListener('touchstart', playOnEnter, { passive: true });
-          div.addEventListener('touchend', stopOnLeave);
-        }
+        // Hover/touch controls
+        const playOnEnter = () => {
+          videoEl.preload = 'auto';
+          videoEl.play().catch(() => {});
+        };
+        const stopOnLeave = () => {
+          videoEl.pause();
+          videoEl.currentTime = 0;
+        };
 
-        // Play hint overlay for videos
-        if (item.type === 'video' && item.videoURL) {
-          const hint = document.createElement('div');
-          hint.className = 'play-hint';
-          hint.innerHTML = '<div class="play-icon">▶</div>';
-          container.appendChild(hint);
-        }
+        div.addEventListener('mouseenter', playOnEnter);
+        div.addEventListener('mouseleave', stopOnLeave);
+        div.addEventListener('touchstart', playOnEnter, { passive: true });
+        div.addEventListener('touchend', stopOnLeave);
 
         div.appendChild(container);
 
-        // Click → open modal
+        // Click opens modal with full video + sound
         div.addEventListener('click', () => openModal(index));
 
         gallery.appendChild(div);
       });
     }
 
-    // ─── Modal ───────────────────────────────────────────────
+    // ─── Modal (full video playback) ───────────────────────────────────────────
     const modal = document.getElementById('modal');
     const modalContent = document.getElementById('modalContent');
     const modalLoading = document.getElementById('modalLoading');
@@ -238,26 +236,16 @@
       modalLoading.style.display = 'flex';
       modalContent.innerHTML = '';
 
-      let el;
-      if (item.type === 'video' && item.videoURL) {
-        el = document.createElement('video');
-        el.src = item.videoURL;
-        el.controls = true;
-        el.autoplay = true;
-        el.muted = false;
-      } else if (item.imageURL) {
-        el = document.createElement('img');
-        el.src = item.imageURL;
-      } else {
-        modalLoading.textContent = 'No media available';
-        return;
-      }
+      const video = document.createElement('video');
+      video.src = item.videoURL;
+      video.controls = true;
+      video.autoplay = true;
+      video.muted = false;
+      video.className = 'modal-media';
+      video.onloadeddata = () => { modalLoading.style.display = 'none'; };
+      video.onerror = () => { modalLoading.textContent = 'Failed to load video'; };
 
-      el.className = 'modal-media';
-      el.onload = el.onloadeddata = () => { modalLoading.style.display = 'none'; };
-      el.onerror = () => { modalLoading.textContent = 'Failed to load'; };
-
-      modalContent.appendChild(el);
+      modalContent.appendChild(video);
       modal.style.display = 'flex';
     }
 

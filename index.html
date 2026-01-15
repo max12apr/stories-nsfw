@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NSFW Stories - Scrollytelling View</title>
+    <title>NSFW Stories - Scrollytelling with Real Media</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <style>
@@ -15,7 +15,6 @@
             overflow-x: hidden;
         }
 
-        /* Story list - unchanged placeholder */
         #story-list {
             position: fixed;
             top: 0;
@@ -36,7 +35,7 @@
 
         .story-item {
             padding: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             background: rgba(255,255,255,0.1);
             cursor: pointer;
             border-radius: 8px;
@@ -45,29 +44,30 @@
         }
 
         .story-item img {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             object-fit: cover;
             border-radius: 50%;
-            margin-right: 10px;
+            margin-right: 12px;
+            border: 2px solid #ff4d6d;
         }
 
         #toggle-list {
             position: fixed;
             top: 20px;
             left: 320px;
-            background: rgba(0,0,0,0.7);
+            background: rgba(255,77,109,0.8);
             border: none;
             color: white;
             padding: 10px;
             cursor: pointer;
             z-index: 1001;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
+            font-size: 1.2rem;
         }
 
-        /* Main story viewer */
         #story-viewer {
             position: relative;
             width: 100vw;
@@ -79,9 +79,8 @@
             display: block;
         }
 
-        /* Scrollytelling container */
         .scrolly-container {
-            height: 400vh; /* Tall enough for multiple sections */
+            height: 500vh;
             position: relative;
             background: #111;
         }
@@ -104,242 +103,205 @@
             align-items: center;
             justify-content: center;
             z-index: 2;
-            background: rgba(0,0,0,0.4); /* Semi-transparent overlay */
+            background: rgba(0,0,0,0.5);
+            text-align: center;
+            padding: 0 20px;
         }
 
         .scroll-section h2 {
-            font-size: 4rem;
-            text-align: center;
+            font-size: 4.5rem;
+            margin: 0 0 1rem;
             opacity: 0;
-            transform: translateY(50px);
-            margin: 0;
+            transform: translateY(60px);
         }
 
         .scroll-section p {
-            font-size: 1.5rem;
-            max-width: 600px;
-            text-align: center;
+            font-size: 1.6rem;
+            max-width: 700px;
             opacity: 0;
-            transform: translateY(50px);
-            padding: 0 20px;
+            transform: translateY(60px);
         }
 
         .close-story {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: rgba(255,0,0,0.8);
+            background: rgba(255,0,80,0.9);
             border: none;
             color: white;
-            padding: 10px 15px;
+            padding: 12px 20px;
             cursor: pointer;
             z-index: 1002;
-            border-radius: 5px;
+            border-radius: 6px;
+            font-size: 1.1rem;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-            #story-list {
-                width: 100%;
-                left: auto;
-                transform: translateX(100%);
-            }
-
-            #story-list.hidden {
-                transform: translateX(100%);
-            }
-
-            #toggle-list {
-                left: 20px;
-            }
-
-            .scroll-section h2 {
-                font-size: 2.5rem;
-            }
-
-            .scroll-section p {
-                font-size: 1.2rem;
-            }
+            #story-list { width: 100%; transform: translateX(100%); }
+            #story-list.hidden { transform: translateX(100%); }
+            #toggle-list { left: 20px; }
+            .scroll-section h2 { font-size: 3rem; }
+            .scroll-section p { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Story List Sidebar -->
-    <div id="story-list">
-        <h3>Stories</h3>
+
+    <!-- Story List with REAL profile images -->
+    <div id="story-list" class="hidden">
+        <h3>Hot Stories</h3>
         <div class="story-item" data-story="1">
-            <img src="https://via.placeholder.com/50?text=1" alt="Story 1">
+            <img src="https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Story 1">
             <div>
-                <div>Hot Night 🔥</div>
-                <small>2 min read</small>
+                <div>Midnight Desire</div>
+                <small>Intense & steamy</small>
             </div>
         </div>
         <div class="story-item" data-story="2">
-            <img src="https://via.placeholder.com/50?text=2" alt="Story 2">
+            <img src="https://images.pexels.com/photos/1181683/pexels-photo-1181683.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Story 2">
             <div>
-                <div>Beach Adventure 🌊</div>
-                <small>3 min read</small>
+                <div>Velvet Touch</div>
+                <small>Sensual whispers</small>
             </div>
         </div>
         <div class="story-item" data-story="3">
-            <img src="https://via.placeholder.com/50?text=3" alt="Story 3">
+            <img src="https://images.pexels.com/photos/1486222/pexels-photo-1486222.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Story 3">
             <div>
-                <div>Secret Encounter 😈</div>
-                <small>4 min read</small>
+                <div>Secret Flames</div>
+                <small>Passion unleashed</small>
             </div>
         </div>
-        <!-- Add more stories -->
     </div>
 
     <button id="toggle-list">☰</button>
 
-    <!-- Story Viewer -->
+    <!-- Main Viewer -->
     <div id="story-viewer">
-        <button class="close-story">× Close</button>
+        <button class="close-story">✕ Close</button>
         <div class="scrolly-container" id="scrolly-container">
-            <!-- Video Background - Replace src with your NSFW video URL (MP4, H.264/ProRes recommended for smooth scrub) -->
-            <video class="video-background" muted loop playsinline preload="auto">
-                <source src="https://assets.mixkit.co/videos/preview/mixkit-portrait-of-a-woman-in-a-suit-39787-large.mp4" type="video/mp4">
-                <!-- Placeholder video; replace with your story video -->
+
+            <!-- Real sensual-style video (looping, muted, from public free source) -->
+            <video class="video-background" muted loop playsinline preload="auto"
+                   poster="https://images.pexels.com/photos/1043474/pexels-photo-1043474.jpeg?auto=compress&cs=tinysrgb&w=1920">
+                <source src="https://player.vimeo.com/external/370331493.sd.mp4?s=236da4f30a013b2f1e6d11a5d0d807c42a3a4e6d&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
+                <!-- Alternative: https://assets.mixkit.co/videos/preview/mixkit-woman-dancing-in-the-dark-32721-large.mp4 -->
+                Your browser doesn't support video.
             </video>
 
-            <!-- Scroll Sections - Text overlays that animate in as you scroll -->
+            <!-- Story sections (fade in on scroll) -->
             <section class="scroll-section">
                 <div>
                     <h2>Chapter 1</h2>
-                    <p>The night was young, and the desire burned hot. She entered the room, eyes locked...</p>
+                    <p>The room was dim, lit only by moonlight. Her skin glowed as fingers traced slow, deliberate paths across warm curves...</p>
                 </div>
             </section>
+
             <section class="scroll-section">
                 <div>
                     <h2>Chapter 2</h2>
-                    <p>Clothes fell to the floor. Hands explored every curve. The rhythm built slowly...</p>
+                    <p>Breath quickened. Lips met in hungry silence. Every touch ignited sparks that raced through their bodies like wildfire...</p>
                 </div>
             </section>
+
             <section class="scroll-section">
                 <div>
                     <h2>Chapter 3</h2>
-                    <p>Passion exploded. Moans filled the air. They lost themselves in ecstasy...</p>
+                    <p>Clothes vanished like forgotten promises. Bodies pressed together, moving in perfect, primal rhythm...</p>
                 </div>
             </section>
+
             <section class="scroll-section">
                 <div>
-                    <h2>The End</h2>
-                    <p>Breathless, satisfied, they lay entwined. Until next time...</p>
+                    <h2>Climax</h2>
+                    <p>Time dissolved. Only gasps, moans, and the sweet release of total surrender remained...</p>
                 </div>
             </section>
         </div>
     </div>
 
     <script>
-        // Register GSAP ScrollTrigger
         gsap.registerPlugin(ScrollTrigger);
 
-        // Story data - map story ID to video and sections
-        const stories = {
-            1: {
-                video: 'https://your-nsfw-video-1.mp4', // Replace with actual video
-                sections: [
-                    { title: 'Chapter 1', text: 'The night was young...' },
-                    { title: 'Chapter 2', text: 'Clothes fell...' },
-                    // etc.
-                ]
-            },
-            // Add more stories
-        };
-
-        let currentVideoTl;
-
-        // Toggle story list
         const storyList = document.getElementById('story-list');
         const toggleBtn = document.getElementById('toggle-list');
+
         toggleBtn.addEventListener('click', () => {
             storyList.classList.toggle('hidden');
         });
 
-        // Open story
         document.querySelectorAll('.story-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                const storyId = e.currentTarget.dataset.story;
-                openStory(storyId);
+            item.addEventListener('click', () => {
+                storyList.classList.add('hidden');
+                document.getElementById('story-viewer').classList.add('active');
+                initScrollAnimations();
             });
         });
 
-        function openStory(storyId) {
-            storyList.classList.add('hidden');
-            const viewer = document.getElementById('story-viewer');
-            const container = document.getElementById('scrolly-container');
-            viewer.classList.add('active');
+        document.querySelector('.close-story').addEventListener('click', () => {
+            document.getElementById('story-viewer').classList.remove('active');
+            const video = document.querySelector('.video-background');
+            if (video) video.currentTime = 0;
+            ScrollTrigger.getAll().forEach(t => t.kill());
+        });
 
-            // Load story video (sync with sections)
-            const video = container.querySelector('.video-background');
-            video.src = stories[storyId]?.video || 'https://assets.mixkit.co/videos/preview/mixkit-portrait-of-a-woman-in-a-suit-39787-large.mp4';
-            video.load();
-
-            // Kill previous animations
-            if (currentVideoTl) {
-                currentVideoTl.kill();
+        function initScrollAnimations() {
+            const video = document.querySelector('.video-background');
+            if (!video.duration) {
+                video.onloadedmetadata = () => startVideoScrub(video);
+            } else {
+                startVideoScrub(video);
             }
 
-            // Video scrub timeline synced to entire scrolly height
-            currentVideoTl = gsap.timeline({
-                scrollTrigger: {
-                    trigger: container,
-                    start: 'top top',
-                    end: 'bottom top',
-                    scrub: 1, // Tight sync (0.5 for smoother/easier scrub)
-                    anticipatePin: 1,
-                    onUpdate: (self) => {
-                        video.currentTime = self.progress * video.duration;
-                    }
-                }
-            });
-
-            // Animate text sections
-            gsap.utils.toArray('.scroll-section').forEach((section, i) => {
+            // Text animations
+            gsap.utils.toArray('.scroll-section').forEach((section) => {
                 gsap.to(section.querySelector('h2'), {
                     opacity: 1,
                     y: 0,
-                    duration: 1,
-                    ease: 'power2.out',
+                    duration: 1.2,
+                    ease: 'power3.out',
                     scrollTrigger: {
                         trigger: section,
-                        containerAnimation: currentVideoTl, // Sync to video timeline
-                        start: 'top 80%',
-                        end: 'bottom 20%',
+                        start: 'top 85%',
+                        end: 'top 15%',
                         scrub: true
                     }
                 });
                 gsap.to(section.querySelector('p'), {
                     opacity: 1,
                     y: 0,
-                    duration: 1,
-                    ease: 'power2.out',
+                    duration: 1.2,
+                    ease: 'power3.out',
                     scrollTrigger: {
                         trigger: section,
-                        containerAnimation: currentVideoTl,
-                        start: 'top 60%',
-                        end: 'bottom 40%',
+                        start: 'top 70%',
+                        end: 'top 30%',
                         scrub: true
                     }
                 });
             });
+
+            ScrollTrigger.refresh(true);
         }
 
-        // Close story
-        document.querySelector('.close-story').addEventListener('click', () => {
-            document.getElementById('story-viewer').classList.remove('active');
-            if (currentVideoTl) {
-                currentVideoTl.kill();
-                currentVideoTl = null;
-            }
-            const video = document.querySelector('.video-background');
-            video.pause();
-            video.currentTime = 0;
-        });
+        function startVideoScrub(video) {
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger: '#scrolly-container',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 0.8,
+                    anticipatePin: 1,
+                    onUpdate: (self) => {
+                        if (video.duration) {
+                            video.currentTime = self.progress * video.duration;
+                        }
+                    }
+                }
+            });
+        }
 
-        // Refresh ScrollTrigger on load
-        ScrollTrigger.refresh();
+        // Auto-open list on load for demo
+        setTimeout(() => storyList.classList.remove('hidden'), 800);
     </script>
 </body>
 </html>

@@ -1,402 +1,345 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Stories • Erotic Tales</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-          animation: { 'fade-in': 'fadeIn 0.6s ease-out' },
-          keyframes: {
-            fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSFW Stories - Scrollytelling View</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
         }
-      }
-    }
-  </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --header-height: 80px;
-    }
-    body {
-      padding-top: 0 !important;
-    }
-    header {
-      height: var(--header-height);
-    }
-    main {
-      padding-top: 0 !important;
-      margin-top: 0 !important;
-    }
-    .page {
-      display: none !important;
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-      transition: opacity 0.5s ease, visibility 0.5s step-end;
-      min-height: calc(100vh - var(--header-height));
-    }
-    .page.active {
-      display: block !important;
-      opacity: 1;
-      visibility: visible;
-      pointer-events: auto;
-      transition: opacity 0.5s ease, visibility 0.5s step-start;
-    }
-    .card-hover {
-      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .card-hover:hover {
-      transform: translateY(-12px) scale(1.02);
-      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25) !important;
-    }
-    .glass {
-      background: rgba(255,255,255,0.75);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    .dark .glass {
-      background: rgba(31,41,55,0.75);
-    }
-  </style>
+
+        /* Story list - unchanged placeholder */
+        #story-list {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100vh;
+            background: rgba(0,0,0,0.9);
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s;
+        }
+
+        #story-list.hidden {
+            transform: translateX(-100%);
+        }
+
+        .story-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.1);
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .story-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        #toggle-list {
+            position: fixed;
+            top: 20px;
+            left: 320px;
+            background: rgba(0,0,0,0.7);
+            border: none;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 1001;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+        }
+
+        /* Main story viewer */
+        #story-viewer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: none;
+        }
+
+        #story-viewer.active {
+            display: block;
+        }
+
+        /* Scrollytelling container */
+        .scrolly-container {
+            height: 400vh; /* Tall enough for multiple sections */
+            position: relative;
+            background: #111;
+        }
+
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .scroll-section {
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            background: rgba(0,0,0,0.4); /* Semi-transparent overlay */
+        }
+
+        .scroll-section h2 {
+            font-size: 4rem;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            margin: 0;
+        }
+
+        .scroll-section p {
+            font-size: 1.5rem;
+            max-width: 600px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            padding: 0 20px;
+        }
+
+        .close-story {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,0,0,0.8);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            cursor: pointer;
+            z-index: 1002;
+            border-radius: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #story-list {
+                width: 100%;
+                left: auto;
+                transform: translateX(100%);
+            }
+
+            #story-list.hidden {
+                transform: translateX(100%);
+            }
+
+            #toggle-list {
+                left: 20px;
+            }
+
+            .scroll-section h2 {
+                font-size: 2.5rem;
+            }
+
+            .scroll-section p {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 text-gray-900 dark:text-gray-100 min-h-screen font-sans transition-colors duration-300">
-
-  <!-- Navigation -->
-  <header class="sticky top-0 z-50 glass border-b border-gray-200/50 dark:border-gray-800/50">
-    <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-white font-bold text-xl shadow-lg">
-          S
-        </div>
-        <span class="text-xl font-semibold tracking-tight">Stories</span>
-      </div>
-
-      <div class="flex items-center gap-4">
-        <button id="themeToggle" class="w-10 h-10 rounded-full bg-white/80 dark:bg-gray-800/80 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 transition shadow-sm">
-          🌙
-        </button>
-
-        <div id="authArea"></div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main id="app">
-
-    <!-- LOGIN PAGE -->
-    <div id="loginPage" class="page flex items-center justify-center px-6">
-      <div class="w-full max-w-md glass rounded-3xl shadow-2xl p-10 border border-gray-100/50 dark:border-gray-700/50 animate-fade-in">
-        <h2 class="text-3xl font-bold text-center mb-2 bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">Welcome Back</h2>
-        <p class="text-center text-gray-500 dark:text-gray-400 mb-8">Sign in to unlock all stories</p>
-        
-        <form id="loginForm" class="space-y-6">
-          <div>
-            <label class="block text-sm font-medium mb-2">Username</label>
-            <input type="text" id="username" class="w-full px-5 py-3.5 rounded-xl bg-white/60 dark:bg-gray-700/60 border border-gray-300/70 dark:border-gray-600/70 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition" placeholder="admin" required>
-          </div>
-          <div>
-            <label class="block text-sm font-medium mb-2">Password</label>
-            <input type="password" id="password" class="w-full px-5 py-3.5 rounded-xl bg-white/60 dark:bg-gray-700/60 border border-gray-300/70 dark:border-gray-600/70 focus:outline-none focus:ring-2 focus:ring-rose-500/50 transition" placeholder="••••••" required>
-          </div>
-          <button type="submit" class="w-full py-4 bg-gradient-to-r from-rose-600 to-pink-600 text-white rounded-xl font-medium hover:from-rose-700 hover:to-pink-700 transition shadow-lg transform hover:scale-[1.02] active:scale-95">
-            Sign In
-          </button>
-        </form>
-        <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-8">
-          Demo credentials: <strong>admin</strong> / <strong>admin</strong>
-        </p>
-      </div>
-    </div>
-
-    <!-- LANDING PAGE -->
-    <div id="landingPage" class="page">
-
-      <!-- Hero -->
-      <section id="hero" class="relative h-[60vh] sm:h-[70vh] md:h-screen overflow-hidden mt-0 pt-0">
-        <video id="heroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover bg-black transition-transform duration-[20s] hover:scale-105">
-          <source src="" type="video/mp4">
-        </video>
-        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/55 to-transparent/30"></div>
-        
-        <div class="relative h-full max-w-7xl mx-auto px-6 flex flex-col justify-end pb-16 md:pb-24">
-          <div id="heroContent" class="max-w-3xl text-white drop-shadow-lg">
-            <span class="inline-block bg-rose-600/80 backdrop-blur-md px-5 py-1.5 rounded-full text-sm font-semibold mb-5">● TRENDING</span>
-            <h1 id="heroTitle" class="text-4xl md:text-6xl font-extrabold leading-tight mb-5"></h1>
-            <p id="heroSubtitle" class="text-lg md:text-2xl text-gray-200 mb-10 max-w-xl"></p>
-            <button id="readFeaturedBtn" class="bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white px-10 py-5 rounded-full font-semibold text-lg shadow-xl transition transform hover:scale-105 active:scale-95">
-              Read Full Story →
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- Stories Grid -->
-      <section class="max-w-7xl mx-auto px-6 py-16 md:py-24">
-        <div class="flex items-center justify-between mb-12">
-          <h2 class="text-3xl md:text-4xl font-bold">Explore Stories</h2>
-          <div id="loading" class="hidden animate-spin rounded-full h-8 w-8 border-b-2 border-rose-600"></div>
-        </div>
-        <div id="storiesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"></div>
-      </section>
-    </div>
-
-    <!-- STORY DETAIL PAGE -->
-    <div id="storyPage" class="page">
-      <section class="max-w-4xl mx-auto px-6 py-12 md:py-20">
-        <button id="backBtn" class="mb-10 text-rose-600 hover:text-rose-700 font-medium flex items-center gap-2 transition hover:translate-x-1">
-          ← Back to Stories
-        </button>
-
-        <div class="rounded-3xl overflow-hidden shadow-2xl mb-12">
-          <video id="storyVideo" autoplay muted loop playsinline class="w-full h-[400px] md:h-[600px] object-cover bg-black">
-          </video>
-        </div>
-
-        <div class="prose dark:prose-invert prose-lg max-w-none prose-headings:text-rose-600 dark:prose-headings:text-rose-400">
-          <h1 id="storyTitle" class="text-4xl md:text-5xl font-bold mb-4"></h1>
-          <p id="storySubtitle" class="text-xl text-gray-600 dark:text-gray-300 mb-8 italic"></p>
-          
-          <div class="flex flex-wrap items-center gap-6 text-sm text-gray-500 dark:text-gray-400 mb-12 border-b border-gray-200 dark:border-gray-700 pb-6">
-            <div class="flex items-center gap-3">
-              <div class="w-12 h-12 rounded-full bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center text-white font-bold shadow-md">A</div>
-              <div>
-                <span id="storyAuthor" class="font-medium block"></span>
-                <span class="text-xs">Author</span>
-              </div>
+<body>
+    <!-- Story List Sidebar -->
+    <div id="story-list">
+        <h3>Stories</h3>
+        <div class="story-item" data-story="1">
+            <img src="https://via.placeholder.com/50?text=1" alt="Story 1">
+            <div>
+                <div>Hot Night 🔥</div>
+                <small>2 min read</small>
             </div>
-            <div class="flex items-center gap-2">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <span id="storyReadTime"></span>
-            </div>
-          </div>
-
-          <div id="storyContent" class="leading-relaxed"></div>
         </div>
-      </section>
+        <div class="story-item" data-story="2">
+            <img src="https://via.placeholder.com/50?text=2" alt="Story 2">
+            <div>
+                <div>Beach Adventure 🌊</div>
+                <small>3 min read</small>
+            </div>
+        </div>
+        <div class="story-item" data-story="3">
+            <img src="https://via.placeholder.com/50?text=3" alt="Story 3">
+            <div>
+                <div>Secret Encounter 😈</div>
+                <small>4 min read</small>
+            </div>
+        </div>
+        <!-- Add more stories -->
     </div>
 
-  </main>
+    <button id="toggle-list">☰</button>
 
-  <script>
-    // ────────────────────────────────────────────────
-    // State & Config
-    // ────────────────────────────────────────────────
-    let stories = [];
-    let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    const pages = {
-      login: document.getElementById("loginPage"),
-      landing: document.getElementById("landingPage"),
-      story: document.getElementById("storyPage")
-    };
+    <!-- Story Viewer -->
+    <div id="story-viewer">
+        <button class="close-story">× Close</button>
+        <div class="scrolly-container" id="scrolly-container">
+            <!-- Video Background - Replace src with your NSFW video URL (MP4, H.264/ProRes recommended for smooth scrub) -->
+            <video class="video-background" muted loop playsinline preload="auto">
+                <source src="https://assets.mixkit.co/videos/preview/mixkit-portrait-of-a-woman-in-a-suit-39787-large.mp4" type="video/mp4">
+                <!-- Placeholder video; replace with your story video -->
+            </video>
 
-    // ────────────────────────────────────────────────
-    // Theme Toggle
-    // ────────────────────────────────────────────────
-    const html = document.documentElement;
-    const themeToggle = document.getElementById("themeToggle");
-    if (localStorage.theme === "dark" || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      html.classList.add("dark");
-    }
-    themeToggle.addEventListener("click", () => {
-      html.classList.toggle("dark");
-      localStorage.theme = html.classList.contains("dark") ? "dark" : "light";
-    });
+            <!-- Scroll Sections - Text overlays that animate in as you scroll -->
+            <section class="scroll-section">
+                <div>
+                    <h2>Chapter 1</h2>
+                    <p>The night was young, and the desire burned hot. She entered the room, eyes locked...</p>
+                </div>
+            </section>
+            <section class="scroll-section">
+                <div>
+                    <h2>Chapter 2</h2>
+                    <p>Clothes fell to the floor. Hands explored every curve. The rhythm built slowly...</p>
+                </div>
+            </section>
+            <section class="scroll-section">
+                <div>
+                    <h2>Chapter 3</h2>
+                    <p>Passion exploded. Moans filled the air. They lost themselves in ecstasy...</p>
+                </div>
+            </section>
+            <section class="scroll-section">
+                <div>
+                    <h2>The End</h2>
+                    <p>Breathless, satisfied, they lay entwined. Until next time...</p>
+                </div>
+            </section>
+        </div>
+    </div>
 
-    // ────────────────────────────────────────────────
-    // Auth UI
-    // ────────────────────────────────────────────────
-    function updateAuthUI() {
-      const area = document.getElementById("authArea");
-      if (isLoggedIn) {
-        area.innerHTML = `
-          <div class="flex items-center gap-4">
-            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Hi, Admin</span>
-            <button id="logoutBtn" class="px-5 py-2 bg-gray-200 dark:bg-gray-700 rounded-full text-sm hover:bg-gray-300 dark:hover:bg-gray-600 transition">
-              Logout
-            </button>
-          </div>
-        `;
-        document.getElementById("logoutBtn")?.addEventListener("click", () => {
-          localStorage.removeItem("isLoggedIn");
-          isLoggedIn = false;
-          location.reload();
+    <script>
+        // Register GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Story data - map story ID to video and sections
+        const stories = {
+            1: {
+                video: 'https://your-nsfw-video-1.mp4', // Replace with actual video
+                sections: [
+                    { title: 'Chapter 1', text: 'The night was young...' },
+                    { title: 'Chapter 2', text: 'Clothes fell...' },
+                    // etc.
+                ]
+            },
+            // Add more stories
+        };
+
+        let currentVideoTl;
+
+        // Toggle story list
+        const storyList = document.getElementById('story-list');
+        const toggleBtn = document.getElementById('toggle-list');
+        toggleBtn.addEventListener('click', () => {
+            storyList.classList.toggle('hidden');
         });
-      } else {
-        area.innerHTML = `
-          <button id="loginBtn" class="px-6 py-2.5 bg-gradient-to-r from-rose-600 to-pink-600 text-white rounded-full font-medium hover:from-rose-700 hover:to-pink-700 transition shadow-md">
-            Sign In
-          </button>
-        `;
-        document.getElementById("loginBtn")?.addEventListener("click", () => showPage("login"));
-      }
-    }
-    updateAuthUI();
 
-    // ────────────────────────────────────────────────
-    // Router / Page Switch
-    // ────────────────────────────────────────────────
-    function showPage(pageId, storyId = null) {
-      if (!isLoggedIn && pageId !== "login") {
-        showPage("login");
-        return;
-      }
+        // Open story
+        document.querySelectorAll('.story-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const storyId = e.currentTarget.dataset.story;
+                openStory(storyId);
+            });
+        });
 
-      // Hide everything first
-      Object.values(pages).forEach(page => {
-        page.classList.remove("active");
-        page.style.display = "none";
-        page.style.opacity = "0";
-        page.style.visibility = "hidden";
-      });
+        function openStory(storyId) {
+            storyList.classList.add('hidden');
+            const viewer = document.getElementById('story-viewer');
+            const container = document.getElementById('scrolly-container');
+            viewer.classList.add('active');
 
-      const target = pages[pageId];
-      if (!target) return;
+            // Load story video (sync with sections)
+            const video = container.querySelector('.video-background');
+            video.src = stories[storyId]?.video || 'https://assets.mixkit.co/videos/preview/mixkit-portrait-of-a-woman-in-a-suit-39787-large.mp4';
+            video.load();
 
-      target.style.display = "block";
+            // Kill previous animations
+            if (currentVideoTl) {
+                currentVideoTl.kill();
+            }
 
-      requestAnimationFrame(() => {
-        target.classList.add("active");
-        target.style.opacity = "1";
-        target.style.visibility = "visible";
+            // Video scrub timeline synced to entire scrolly height
+            currentVideoTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: container,
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 1, // Tight sync (0.5 for smoother/easier scrub)
+                    anticipatePin: 1,
+                    onUpdate: (self) => {
+                        video.currentTime = self.progress * video.duration;
+                    }
+                }
+            });
 
-        if (pageId === "story" && storyId) {
-          loadStory(storyId);
+            // Animate text sections
+            gsap.utils.toArray('.scroll-section').forEach((section, i) => {
+                gsap.to(section.querySelector('h2'), {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: section,
+                        containerAnimation: currentVideoTl, // Sync to video timeline
+                        start: 'top 80%',
+                        end: 'bottom 20%',
+                        scrub: true
+                    }
+                });
+                gsap.to(section.querySelector('p'), {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: 'power2.out',
+                    scrollTrigger: {
+                        trigger: section,
+                        containerAnimation: currentVideoTl,
+                        start: 'top 60%',
+                        end: 'bottom 40%',
+                        scrub: true
+                    }
+                });
+            });
         }
 
-        window.scrollTo({ top: 0, behavior: "instant" });
-      });
-    }
-
-    // ────────────────────────────────────────────────
-    // Login Handler
-    // ────────────────────────────────────────────────
-    document.getElementById("loginForm")?.addEventListener("submit", e => {
-      e.preventDefault();
-      const user = document.getElementById("username").value.trim();
-      const pass = document.getElementById("password").value.trim();
-
-      if (user === "admin" && pass === "admin") {
-        localStorage.setItem("isLoggedIn", "true");
-        isLoggedIn = true;
-        updateAuthUI();
-
-        // Force hide login completely
-        pages.login.classList.remove("active");
-        pages.login.style.display = "none";
-        pages.login.style.opacity = "0";
-        pages.login.style.visibility = "hidden";
-
-        showPage("landing");
-      } else {
-        alert("Invalid credentials");
-      }
-    });
-
-    // Initial page
-    if (!isLoggedIn) {
-      showPage("login");
-    } else {
-      showPage("landing");
-    }
-
-    // ────────────────────────────────────────────────
-    // Load Stories
-    // ────────────────────────────────────────────────
-    async function loadStories() {
-      const loading = document.getElementById("loading");
-      loading?.classList.remove("hidden");
-
-      try {
-        const res = await fetch("stories.json");
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        stories = await res.json();
-
-        const featured = stories[0];
-        document.getElementById("heroTitle").textContent = featured.title;
-        document.getElementById("heroSubtitle").textContent = featured.subtitle;
-        const src = document.getElementById("heroVideo").querySelector("source");
-        if (featured.heroVideo) {
-          src.src = featured.heroVideo;
-          document.getElementById("heroVideo").load();
-        }
-        document.getElementById("readFeaturedBtn").onclick = () => showPage("story", featured.id);
-
-        const grid = document.getElementById("storiesGrid");
-        grid.innerHTML = "";
-        stories.forEach(story => {
-          const card = document.createElement("div");
-          card.className = "glass rounded-2xl overflow-hidden shadow-xl card-hover cursor-pointer border border-gray-200/30 dark:border-gray-700/30";
-          card.innerHTML = `
-            <div class="h-56 overflow-hidden">
-              <img src="${story.images?.[0] || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87'}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110" alt="">
-            </div>
-            <div class="p-6">
-              <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3 ${
-                story.category === 'erotica' ? 'bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-200' : 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-200'
-              }">
-                ${story.category.toUpperCase()}
-              </span>
-              <h3 class="text-xl font-semibold mb-3 line-clamp-2">${story.title}</h3>
-              <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-3 mb-5">${story.tldr || story.subtitle}</p>
-              <div class="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                <span>${story.author}</span>
-                <span class="flex items-center gap-1.5">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                  ${story.readTime}
-                </span>
-              </div>
-            </div>
-          `;
-          card.onclick = () => showPage("story", story.id);
-          grid.appendChild(card);
+        // Close story
+        document.querySelector('.close-story').addEventListener('click', () => {
+            document.getElementById('story-viewer').classList.remove('active');
+            if (currentVideoTl) {
+                currentVideoTl.kill();
+                currentVideoTl = null;
+            }
+            const video = document.querySelector('.video-background');
+            video.pause();
+            video.currentTime = 0;
         });
-      } catch (err) {
-        console.error("Stories load error:", err);
-        document.getElementById("storiesGrid").innerHTML = `<p class="col-span-full text-center py-20 text-red-600 dark:text-red-400">Failed to load stories. Check stories.json</p>`;
-      } finally {
-        loading?.classList.add("hidden");
-      }
-    }
 
-    function loadStory(id) {
-      const story = stories.find(s => s.id === id);
-      if (!story) return showPage("landing");
-
-      document.getElementById("storyTitle").textContent = story.title;
-      document.getElementById("storySubtitle").textContent = story.subtitle;
-      document.getElementById("storyAuthor").textContent = story.author;
-      document.getElementById("storyReadTime").textContent = story.readTime;
-
-      const video = document.getElementById("storyVideo");
-      video.innerHTML = story.heroVideo ? `<source src="${story.heroVideo}" type="video/mp4">` : "";
-      if (story.heroVideo) video.load();
-
-      let html = story.content
-        .split('\n\n')
-        .map(p => `<p class="mb-6">${p.trim()}</p>`)
-        .join('');
-
-      if (story.images?.length) {
-        story.images.forEach(src => {
-          html += `<img src="${src}" class="rounded-2xl my-10 shadow-xl w-full object-cover max-h-[500px]" alt="Scene">`;
-        });
-      }
-
-      document.getElementById("storyContent").innerHTML = html;
-    }
-
-    document.getElementById("backBtn")?.addEventListener("click", () => showPage("landing"));
-
-    // Init data
-    loadStories();
-  </script>
+        // Refresh ScrollTrigger on load
+        ScrollTrigger.refresh();
+    </script>
 </body>
 </html>

@@ -9,21 +9,16 @@
       --bg: #0f0f0f;
       --card: #1a1a1a;
       --text: #e0e0e0;
-      --accent: #bb86fc;
     }
     body {
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       margin: 0;
       padding: 24px 16px;
       min-height: 100vh;
     }
-    h1 {
-      text-align: center;
-      margin: 0 0 2rem;
-      font-weight: 500;
-    }
+    h1 { text-align: center; margin: 0 0 2rem; font-weight: 500; }
     .gallery {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -35,75 +30,67 @@
       background: var(--card);
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
       transition: all 0.18s ease;
       cursor: pointer;
       aspect-ratio: 3 / 4;
       position: relative;
     }
     .item:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.7), 0 0 0 1px rgba(187,134,252,0.15);
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.8);
     }
     .media-container {
+      position: relative;
       width: 100%;
       height: 100%;
-      position: relative;
-      overflow: hidden;
       background: #000;
+      overflow: hidden;
     }
-    .media-container img.poster,
-    .media-container video.preview {
+    .preview-img, .preview-video {
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      position: absolute;
-      inset: 0;
-      transition: opacity 0.25s ease;
+      transition: opacity 0.3s ease;
     }
-    .media-container video.preview {
+    .preview-video {
       opacity: 0;
       pointer-events: none;
     }
-    .item:hover .media-container video.preview {
-      opacity: 1;
-    }
-    .item:hover .media-container img.poster {
-      opacity: 0;
-    }
-    .video-overlay {
+    .item:hover .preview-video { opacity: 1; }
+    .item:hover .preview-img   { opacity: 0; }
+    .play-hint {
       position: absolute;
       inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(0,0,0,0.35);
+      background: rgba(0,0,0,0.4);
       opacity: 1;
-      transition: opacity 0.25s ease;
+      transition: opacity 0.3s ease;
       pointer-events: none;
       z-index: 2;
     }
-    .item:hover .video-overlay {
-      opacity: 0;
-    }
+    .item:hover .play-hint { opacity: 0; }
     .play-icon {
-      font-size: 4.8rem;
+      font-size: 5rem;
       color: white;
-      filter: drop-shadow(0 3px 10px black);
+      filter: drop-shadow(0 3px 12px black);
     }
     .caption {
       position: absolute;
       bottom: 0;
       left: 0; right: 0;
-      padding: 14px 12px;
-      background: linear-gradient(to top, rgba(0,0,0,0.88), transparent);
-      font-size: 0.92rem;
+      padding: 14px;
+      background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+      font-size: 0.9rem;
       text-align: center;
       z-index: 3;
-      opacity: 0.95;
     }
 
-    /* Modal ──────────────────────────────────────── */
+    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -112,12 +99,11 @@
       z-index: 9999;
       align-items: center;
       justify-content: center;
-      backdrop-filter: blur(5px);
     }
     .modal-content {
-      position: relative;
       max-width: 96vw;
       max-height: 96vh;
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -127,53 +113,31 @@
       max-height: 82vh;
       object-fit: contain;
       border-radius: 10px;
-      box-shadow: 0 0 70px rgba(0,0,0,0.9);
-    }
-    .modal-caption {
-      margin-top: 1.2rem;
-      font-size: 1.05rem;
-      max-width: 90%;
-      text-align: center;
-      color: #ddd;
     }
     .close {
       position: absolute;
       top: 20px;
       right: 30px;
-      font-size: 52px;
+      font-size: 50px;
       color: white;
       cursor: pointer;
-      text-shadow: 0 2px 10px black;
       z-index: 10000;
     }
-    .nav-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 4rem;
-      color: rgba(255,255,255,0.75);
-      cursor: pointer;
-      padding: 24px;
-      user-select: none;
-    }
-    .prev { left: 16px; }
-    .next { right: 16px; }
     .loading {
       position: absolute;
       inset: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
-      color: #999;
+      color: #aaa;
+      font-size: 1.4rem;
     }
   </style>
 </head>
 <body>
-  <h1>NSFW Media Gallery</h1>
+  <h1>Media Gallery</h1>
   <div class="gallery" id="gallery"></div>
 
-  <!-- Modal -->
   <div class="modal" id="modal">
     <span class="close" id="close">×</span>
     <div class="modal-content" id="modalContent">
@@ -183,12 +147,11 @@
 
   <script>
     let mediaItems = [];
-    let currentIndex = -1;
 
     fetch('media.json')
-      .then(r => {
-        if (!r.ok) throw new Error("media.json load failed");
-        return r.json();
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to load media.json');
+        return response.json();
       })
       .then(data => {
         mediaItems = data;
@@ -197,7 +160,7 @@
       .catch(err => {
         console.error(err);
         document.getElementById('gallery').innerHTML = 
-          '<p style="text-align:center; color:#f66; padding:4rem;">Failed to load media</p>';
+          '<p style="text-align:center; color:#f66; padding:4rem;">Failed to load media.json</p>';
       });
 
     function buildGallery() {
@@ -212,137 +175,99 @@
         const container = document.createElement('div');
         container.className = 'media-container';
 
-        const isVideo = item.type === 'video' || /\.(mp4|webm)$/i.test(item.url);
+        // Preview image (shown by default for both images & videos)
+        const img = document.createElement('img');
+        img.className = 'preview-img';
+        img.src = item.imageURL || 'https://via.placeholder.com/320x480/222/aaa?text=No+Preview';
+        img.alt = `Media ${index + 1}`;
+        img.loading = 'lazy';
+        container.appendChild(img);
 
-        if (isVideo) {
-          // Poster image (shown by default)
-          const poster = document.createElement('img');
-          poster.className = 'poster';
-          poster.src = item.poster || item.thumbnail || `https://via.placeholder.com/320x480/111/555?text=Video+${index+1}`;
-          poster.alt = item.caption || 'Video thumbnail';
-          poster.loading = 'lazy';
-          container.appendChild(poster);
+        let videoEl = null;
+        if (item.type === 'video' && item.videoURL) {
+          videoEl = document.createElement('video');
+          videoEl.className = 'preview-video';
+          videoEl.muted = true;
+          videoEl.loop = true;
+          videoEl.playsInline = true;
+          videoEl.preload = 'none';
+          videoEl.src = item.videoURL;
+          container.appendChild(videoEl);
 
-          // Video preview (plays on hover)
-          const video = document.createElement('video');
-          video.className = 'preview';
-          video.muted = true;
-          video.loop = true;
-          video.playsInline = true;
-          video.preload = 'none';           // Important: don't load until hover
-          video.src = item.url;
-          container.appendChild(video);
+          // Hover/touch to play preview
+          const playOnEnter = () => {
+            videoEl.preload = 'auto';
+            videoEl.play().catch(() => {});
+          };
+          const stopOnLeave = () => {
+            videoEl.pause();
+            videoEl.currentTime = 0;
+          };
 
-          // Play icon overlay
-          const overlay = document.createElement('div');
-          overlay.className = 'video-overlay';
-          overlay.innerHTML = '<div class="play-icon">▶</div>';
-          container.appendChild(overlay);
-
-          // Hover events
-          div.addEventListener('mouseenter', () => {
-            video.preload = 'auto';
-            video.play().catch(() => {});   // silent fail if blocked
-          });
-          div.addEventListener('mouseleave', () => {
-            video.pause();
-            video.currentTime = 0;          // reset to start
-          });
-
-          // Touch support (tap to preview)
-          div.addEventListener('touchstart', () => {
-            video.preload = 'auto';
-            video.play().catch(() => {});
-          }, { passive: true });
-        } else {
-          // Image
-          const img = document.createElement('img');
-          img.src = item.url;
-          img.alt = item.caption || 'Image';
-          img.loading = 'lazy';
-          container.appendChild(img);
+          div.addEventListener('mouseenter', playOnEnter);
+          div.addEventListener('mouseleave', stopOnLeave);
+          div.addEventListener('touchstart', playOnEnter, { passive: true });
+          div.addEventListener('touchend', stopOnLeave);
         }
 
-        // Caption
-        if (item.caption) {
-          const cap = document.createElement('div');
-          cap.className = 'caption';
-          cap.textContent = item.caption;
-          container.appendChild(cap);
+        // Play hint overlay for videos
+        if (item.type === 'video' && item.videoURL) {
+          const hint = document.createElement('div');
+          hint.className = 'play-hint';
+          hint.innerHTML = '<div class="play-icon">▶</div>';
+          container.appendChild(hint);
         }
 
         div.appendChild(container);
+
+        // Click → open modal
         div.addEventListener('click', () => openModal(index));
+
         gallery.appendChild(div);
       });
     }
 
-    // ─── Modal (full playback with sound/controls) ───
+    // ─── Modal ───────────────────────────────────────────────
     const modal = document.getElementById('modal');
     const modalContent = document.getElementById('modalContent');
     const modalLoading = document.getElementById('modalLoading');
     const closeBtn = document.getElementById('close');
 
     function openModal(index) {
-      if (index < 0 || index >= mediaItems.length) return;
-      currentIndex = index;
       const item = mediaItems[index];
-
       modalLoading.style.display = 'flex';
       modalContent.innerHTML = '';
 
-      const isVideo = item.type === 'video' || /\.(mp4|webm)$/i.test(item.url);
-
       let el;
-      if (isVideo) {
+      if (item.type === 'video' && item.videoURL) {
         el = document.createElement('video');
-        el.src = item.url;
+        el.src = item.videoURL;
         el.controls = true;
         el.autoplay = true;
-        el.loop = false;
-        el.muted = false;           // allow sound in modal
-      } else {
+        el.muted = false;
+      } else if (item.imageURL) {
         el = document.createElement('img');
-        el.src = item.url;
+        el.src = item.imageURL;
+      } else {
+        modalLoading.textContent = 'No media available';
+        return;
       }
+
       el.className = 'modal-media';
       el.onload = el.onloadeddata = () => { modalLoading.style.display = 'none'; };
-      el.onerror = () => { modalLoading.textContent = 'Failed to load media'; };
+      el.onerror = () => { modalLoading.textContent = 'Failed to load'; };
 
       modalContent.appendChild(el);
-
-      if (item.caption) {
-        const cap = document.createElement('div');
-        cap.className = 'modal-caption';
-        cap.textContent = item.caption;
-        modalContent.appendChild(cap);
-      }
-
       modal.style.display = 'flex';
-    }
-
-    function changeMedia(delta) {
-      const newIdx = currentIndex + delta;
-      if (newIdx >= 0 && newIdx < mediaItems.length) openModal(newIdx);
     }
 
     closeBtn.onclick = () => modal.style.display = 'none';
     modal.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
-
     document.addEventListener('keydown', e => {
-      if (modal.style.display !== 'flex') return;
-      if (e.key === 'Escape') modal.style.display = 'none';
-      if (e.key === 'ArrowLeft')  changeMedia(-1);
-      if (e.key === 'ArrowRight') changeMedia(1);
+      if (e.key === 'Escape' && modal.style.display === 'flex') {
+        modal.style.display = 'none';
+      }
     });
-
-    // Touch swipe
-    let touchStartX = 0;
-    modal.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX, { passive: true });
-    modal.addEventListener('touchend', e => {
-      const diff = touchStartX - e.changedTouches[0].screenX;
-      if (Math.abs(diff) > 70) changeMedia(diff > 0 ? 1 : -1);
-    }, { passive: true });
   </script>
 </body>
 </html>

@@ -1,78 +1,92 @@
 [
   {
     "type": "image",
-    "url": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/xDQISf9bWLEhMvkp-profile-picture.webp"
-  },
-  {
-    "type": "image",
-    "url": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/generated/3eb2be17-b211-4c05-8fa9-5a5eb1d5bc1d/preview_image.jpg?cache=1"
+    "imageURL": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/xDQISf9bWLEhMvkp-profile-picture.webp",
+    "videoURL": ""
   },
   {
     "type": "video",
-    "url": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/generated/3eb2be17-b211-4c05-8fa9-5a5eb1d5bc1d/generated_video.mp4?cache=1"
+    "imageURL": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/generated/3eb2be17-b211-4c05-8fa9-5a5eb1d5bc1d/preview_image.jpg?cache=1",
+    "videoURL": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/generated/3eb2be17-b211-4c05-8fa9-5a5eb1d5bc1d/generated_video.mp4?cache=1"
   },
   {
     "type": "image",
-    "url": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3_thumbnail.jpg?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3_thumbnail.jpg?cache=1",
+    "videoURL": ""
   },
   {
     "type": "video",
-    "url": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3.mp4?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3_thumbnail.jpg?cache=1",
+    "videoURL": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3.mp4?cache=1"
   },
   {
     "type": "image",
-    "url": "https://imagine-public.x.ai/imagine-public/share-videos/5600a1db-5822-4ab9-8696-06dead9dabc2_thumbnail.jpg?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/5600a1db-5822-4ab9-8696-06dead9dabc2_thumbnail.jpg?cache=1",
+    "videoURL": ""
   },
   {
     "type": "image",
-    "url": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/generated/19acb822-698c-4264-924c-e49dd2b65392/preview_image.jpg?cache=1"
+    "imageURL": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/generated/19acb822-698c-4264-924c-e49dd2b65392/preview_image.jpg?cache=1",
+    "videoURL": ""
   },
   {
     "type": "image",
-    "url": "https://imagine-public.x.ai/imagine-public/share-videos/8d706eb5-49d2-4077-9a5f-7854683b1074_thumbnail.jpg?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/8d706eb5-49d2-4077-9a5f-7854683b1074_thumbnail.jpg?cache=1",
+    "videoURL": ""
   },
   {
     "type": "image",
-    "url": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/generated/a47883a7-c3ec-4235-8def-d53179f193e6/preview_image.jpg?cache=1"
+    "imageURL": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/generated/a47883a7-c3ec-4235-8def-d53179f193e6/preview_image.jpg?cache=1",
+    "videoURL": ""
   },
   {
     "type": "image",
-    "url": "https://imagine-public.x.ai/imagine-public/share-videos/97aac6c7-ea35-4f9a-be97-e1fe58494b32_thumbnail.jpg?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/97aac6c7-ea35-4f9a-be97-e1fe58494b32_thumbnail.jpg?cache=1",
+    "videoURL": ""
   },
   {
     "type": "image",
-    "url": "https://imagine-public.x.ai/imagine-public/images/21d8b635-e385-4cff-8faf-6716975dbd2a.png?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/images/21d8b635-e385-4cff-8faf-6716975dbd2a.png?cache=1",
+    "videoURL": ""
   },
   {
     "type": "image",
-    "url": "https://imagine-public.x.ai/imagine-public/share-videos/29d3faff-2210-461e-ada6-64bf90c1ecf0_thumbnail.jpg?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/29d3faff-2210-461e-ada6-64bf90c1ecf0_thumbnail.jpg?cache=1",
+    "videoURL": ""
   },
   {
     "type": "video",
-    "url": "https://imagine-public.x.ai/imagine-public/share-videos/29d3faff-2210-461e-ada6-64bf90c1ecf0.mp4?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/29d3faff-2210-461e-ada6-64bf90c1ecf0_thumbnail.jpg?cache=1",
+    "videoURL": "https://imagine-public.x.ai/imagine-public/share-videos/29d3faff-2210-461e-ada6-64bf90c1ecf0.mp4?cache=1"
   },
   {
     "type": "image",
-    "url": "https://imagine-public.x.ai/imagine-public/share-videos/a17e9cee-e7b9-4c84-a21b-fa8fdf5e12eb_thumbnail.jpg?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/a17e9cee-e7b9-4c84-a21b-fa8fdf5e12eb_thumbnail.jpg?cache=1",
+    "videoURL": ""
   },
   {
     "type": "video",
-    "url": "https://imagine-public.x.ai/imagine-public/share-videos/a17e9cee-e7b9-4c84-a21b-fa8fdf5e12eb.mp4?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/a17e9cee-e7b9-4c84-a21b-fa8fdf5e12eb_thumbnail.jpg?cache=1",
+    "videoURL": "https://imagine-public.x.ai/imagine-public/share-videos/a17e9cee-e7b9-4c84-a21b-fa8fdf5e12eb.mp4?cache=1"
   },
   {
     "type": "image",
-    "url": "https://imagine-public.x.ai/imagine-public/share-videos/8d3f0522-5f95-41b7-a26b-f9d9afec2923_thumbnail.jpg?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/8d3f0522-5f95-41b7-a26b-f9d9afec2923_thumbnail.jpg?cache=1",
+    "videoURL": ""
   },
   {
     "type": "video",
-    "url": "https://imagine-public.x.ai/imagine-public/share-videos/8d3f0522-5f95-41b7-a26b-f9d9afec2923.mp4?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/8d3f0522-5f95-41b7-a26b-f9d9afec2923_thumbnail.jpg?cache=1",
+    "videoURL": "https://imagine-public.x.ai/imagine-public/share-videos/8d3f0522-5f95-41b7-a26b-f9d9afec2923.mp4?cache=1"
   },
   {
     "type": "image",
-    "url": "https://imagine-public.x.ai/imagine-public/share-videos/13853dbd-b030-4614-be7c-17e049121016_thumbnail.jpg?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/13853dbd-b030-4614-be7c-17e049121016_thumbnail.jpg?cache=1",
+    "videoURL": ""
   },
   {
     "type": "video",
-    "url": "https://imagine-public.x.ai/imagine-public/share-videos/13853dbd-b030-4614-be7c-17e049121016.mp4?cache=1"
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/13853dbd-b030-4614-be7c-17e049121016_thumbnail.jpg?cache=1",
+    "videoURL": "https://imagine-public.x.ai/imagine-public/share-videos/13853dbd-b030-4614-be7c-17e049121016.mp4?cache=1"
   }
 ]

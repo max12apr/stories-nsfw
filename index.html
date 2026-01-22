@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>OBSIDIAN — Forbidden Stories</title>
+  <title>OBSIDIAN – Netflix of Forbidden Stories</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -10,120 +10,123 @@
       theme: {
         extend: {
           colors: {
-            noir: '#0b0c10',
-            shadow: '#14141b',
-            wine: '#5a1a26',
-            gold: '#c6a15b'
+            netflix: '#e50914',
+            dark: '#141414'
           }
         }
       }
     }
   </script>
 </head>
-<body class="bg-noir text-gray-100 overflow-x-hidden">
+<body class="bg-dark text-white">
 
 <!-- AGE GATE -->
-<div id="ageGate" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur">
-  <div class="bg-shadow p-8 rounded-2xl text-center max-w-md border border-white/10">
-    <h1 class="text-2xl font-serif text-gold mb-3">Private Library</h1>
-    <p class="text-sm text-gray-300 mb-6">This platform contains mature, emotionally intense stories. You must be 18+ to enter.</p>
-    <button onclick="enterSite()" class="px-6 py-2 bg-wine rounded-full hover:bg-gold hover:text-black transition">I Am 18+</button>
+<div id="ageGate" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90">
+  <div class="bg-dark p-8 rounded text-center border border-white/20">
+    <h2 class="text-2xl mb-3">Private Library</h2>
+    <p class="text-sm text-gray-400 mb-6">Mature themes. 18+ only.</p>
+    <button onclick="enter()" class="bg-netflix px-6 py-2 rounded">Enter</button>
   </div>
 </div>
 
-<!-- TOP BAR -->
-<header class="sticky top-0 z-40 bg-black/40 backdrop-blur border-b border-white/10">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-    <div class="text-xl font-serif text-gold">OBSIDIAN</div>
-    <input class="bg-shadow px-4 py-1 rounded-full text-sm focus:outline-none" placeholder="Search stories..." />
+<!-- NAVBAR -->
+<header class="fixed top-0 w-full z-40 bg-black/80 backdrop-blur">
+  <div class="flex items-center gap-8 px-8 py-4">
+    <div class="text-netflix font-bold text-2xl">OBSIDIAN</div>
+    <nav class="flex gap-4 text-sm text-gray-300">
+      <span class="cursor-pointer hover:text-white">Home</span>
+      <span class="cursor-pointer hover:text-white">Series</span>
+      <span class="cursor-pointer hover:text-white">Stories</span>
+      <span class="cursor-pointer hover:text-white">My List</span>
+    </nav>
   </div>
 </header>
 
 <!-- HERO -->
-<section class="relative h-[70vh] flex items-center">
-  <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-40">
+<section class="relative h-[80vh]">
+  <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-60">
     <source src="https://www.w3schools.com/howto/rain.mp4" type="video/mp4">
   </video>
-  <div class="relative z-10 max-w-3xl mx-auto text-center">
-    <h1 class="text-4xl md:text-5xl font-serif mb-4">Forbidden Affairs</h1>
-    <p class="text-gray-300 mb-6">Stories that exist between promises and silence.</p>
-    <button onclick="openPlayer()" class="px-6 py-2 bg-wine rounded-full hover:bg-gold hover:text-black transition">Enter Story</button>
-  </div>
-</section>
-
-<!-- LIBRARY ROW -->
-<section class="px-6 py-10">
-  <h2 class="text-xl font-semibold mb-4">Tonight’s Tension</h2>
-  <div class="flex gap-4 overflow-x-auto pb-4">
-    <div onclick="openPlayer()" class="min-w-[220px] h-[130px] bg-shadow rounded-xl p-4 cursor-pointer hover:scale-105 transition">
-      <p class="font-serif text-gold">A Room With Closed Curtains</p>
-      <p class="text-xs text-gray-400">Affair & Secrecy</p>
-    </div>
-    <div class="min-w-[220px] h-[130px] bg-shadow rounded-xl p-4 opacity-40">
-      <p>Coming Soon</p>
+  <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+  <div class="relative z-10 px-12 pt-40 max-w-xl">
+    <h1 class="text-4xl font-bold mb-4">A Room With Closed Curtains</h1>
+    <p class="text-gray-300 mb-6">
+      An intense story of secrecy, longing, and the silence between promises.
+    </p>
+    <div class="flex gap-3">
+      <button onclick="openPlayer()" class="bg-white text-black px-6 py-2 rounded font-semibold">▶ Play</button>
+      <button class="bg-gray-700 px-6 py-2 rounded">More Info</button>
     </div>
   </div>
 </section>
 
-<!-- STORY PLAYER MODAL -->
-<div id="player" class="fixed inset-0 z-50 hidden">
-  <div class="absolute inset-0 bg-black/80 backdrop-blur"></div>
-  <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-30">
-    <source src="https://www.w3schools.com/howto/rain.mp4" type="video/mp4">
-  </video>
+<!-- ROWS -->
+<section class="px-8 mt-8 space-y-10">
 
-  <div class="relative z-10 max-w-3xl mx-auto mt-10 bg-black/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10 overflow-y-auto max-h-[80vh]">
-    <button onclick="closePlayer()" class="absolute top-3 right-3 text-gray-400 hover:text-white">✕</button>
-    <h2 class="text-2xl font-serif text-gold mb-4">A Room With Closed Curtains</h2>
+  <div>
+    <h2 class="text-xl mb-3">Forbidden Affairs</h2>
+    <div class="flex gap-3 overflow-x-auto">
+      <div onclick="openPlayer()" class="min-w-[220px] h-[120px] bg-gray-800 rounded hover:scale-110 transition cursor-pointer p-3">
+        <p class="text-sm">A Room With Closed Curtains</p>
+      </div>
+      <div class="min-w-[220px] h-[120px] bg-gray-800 rounded opacity-40"></div>
+      <div class="min-w-[220px] h-[120px] bg-gray-800 rounded opacity-40"></div>
+    </div>
+  </div>
 
-    <article id="storyText" class="space-y-4 text-gray-200 leading-relaxed text-sm md:text-base">
+  <div>
+    <h2 class="text-xl mb-3">Power & Control</h2>
+    <div class="flex gap-3 overflow-x-auto">
+      <div class="min-w-[220px] h-[120px] bg-gray-800 rounded opacity-40"></div>
+      <div class="min-w-[220px] h-[120px] bg-gray-800 rounded opacity-40"></div>
+    </div>
+  </div>
 
-<p>The hotel room was small, the kind meant for passing nights and forgotten names. Heavy curtains kept the city out, trapping the soft glow of a single lamp and the hush that followed when two people decided not to speak too loudly about why they were there.</p>
+</section>
 
-<p>They had arrived separately. That had been the rule. Different elevators, different excuses, different versions of the same truth offered to the world beyond the door. Yet now, in the quiet, those carefully maintained distances felt thin, almost fragile.</p>
+<!-- PLAYER MODAL -->
+<div id="player" class="fixed inset-0 bg-black/90 z-50 hidden overflow-y-auto">
+  <button onclick="closePlayer()" class="absolute top-5 right-5 text-3xl">✕</button>
 
-<p>He stood near the window, hands in his pockets, watching the faint outline of traffic through the fabric. She sat on the edge of the bed, fingers tracing the seam of the coverlet as if it were a line she should not cross. Between them stretched a space filled with everything they were not supposed to want.</p>
+  <div class="max-w-3xl mx-auto mt-20 p-8 bg-black/70 rounded">
+    <h2 class="text-2xl mb-4">A Room With Closed Curtains</h2>
 
-<p>They did not touch. Not at first. They spoke instead of ordinary things—the weather, a delayed flight, the way the city always smelled of rain at night. It was a language of safety, a way to pretend that what brought them together was coincidence rather than choice.</p>
+    <p class="text-gray-300 leading-relaxed text-sm">
+      The hotel room was small, meant for passing nights and unspoken truths. 
+      Heavy curtains shut the world out, leaving only lamplight and the quiet tension
+      between two people who had arrived separately, carefully, carrying lives that
+      could not touch this moment.  
+      <br><br>
+      They spoke of ordinary things to hide the extraordinary pull between them,
+      of weather and delays and routines waiting elsewhere. Silence kept returning,
+      thick with everything they were not supposed to feel.  
+      <br><br>
+      In that dim room, time felt paused, as if the world had agreed not to look too
+      closely. They did not make promises. They shared only the understanding that
+      some connections exist in secret, carried carefully, like a flame that must
+      never be seen in daylight.
+    </p>
 
-<p>Yet silence kept returning, heavy and intimate. In it lived the awareness of vows spoken elsewhere, of routines and responsibilities waiting beyond these walls. Each pause carried the same unasked question: how long could they keep pretending that this was nothing?</p>
-
-<p>She looked up at him then, really looked, and something in her expression softened. Not with urgency, but with recognition. As if they were both acknowledging the same truth—that what bound them was not recklessness, but a connection that had grown quietly, patiently, until it could no longer be ignored.</p>
-
-<p>The lamp cast warm shadows across the room, blurring the edges of their reflections. It made everything feel suspended, as though time itself had agreed to look the other way for a while. In that light, they seemed less like intruders in each other’s lives and more like two people who had simply arrived late to a conversation meant to happen long ago.</p>
-
-<p>He moved closer, not in haste, but with care, as one approaches something fragile. The distance between them narrowed until it held only the soft hum of the city and the sound of their breathing. It was not the closeness that carried weight, but the restraint within it—the knowledge that every step forward meant stepping further into a secret they would have to carry alone.</p>
-
-<p>They spoke of boundaries, of how this moment could not rewrite the rest of their lives. And yet, in speaking, they revealed how deeply they had already crossed them. The honesty of it was both comforting and unsettling, a reminder that desire does not always announce itself loudly; sometimes it arrives quietly, and by the time it is noticed, it has already settled in.</p>
-
-<p>Outside, a siren passed and faded. Inside, the world felt reduced to lamplight and shadow, to two silhouettes caught in a pause between what was permitted and what was felt. They did not need promises. They needed only the understanding that this was real, even if it had to remain hidden.</p>
-
-<p>When the moment finally ended, as all moments must, it did not do so with drama. It ended with a shared look, a silent agreement to remember and to be careful with the memory. Some connections are not meant to be displayed; they exist in the quiet, in rooms with closed curtains, where the heart is allowed to speak without witnesses.</p>
-
-    </article>
-
-    <div class="mt-6 flex justify-between items-center">
-      <button onclick="shareReddit()" class="px-4 py-2 bg-wine rounded-full text-sm hover:bg-gold hover:text-black transition">Share on Reddit</button>
-      <button onclick="toggleCharacters()" class="text-sm text-gray-300 underline">View Characters</button>
+    <div class="mt-6 flex justify-between">
+      <button onclick="shareReddit()" class="bg-netflix px-4 py-2 rounded">Share on Reddit</button>
+      <button onclick="toggleCast()" class="underline">View Characters</button>
     </div>
 
-    <!-- CHARACTER PANEL -->
-    <div id="characters" class="hidden mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="bg-shadow p-4 rounded-xl">
-        <h3 class="font-serif text-gold">Arjun</h3>
-        <p class="text-xs text-gray-400">Married • Reserved • Emotionally conflicted</p>
+    <div id="cast" class="hidden mt-6 grid grid-cols-2 gap-4">
+      <div class="bg-gray-800 p-3 rounded">
+        <h3>Arjun</h3>
+        <p class="text-xs text-gray-400">Married, restrained, conflicted</p>
       </div>
-      <div class="bg-shadow p-4 rounded-xl">
-        <h3 class="font-serif text-gold">Naina</h3>
-        <p class="text-xs text-gray-400">Engaged • Perceptive • Drawn to silence</p>
+      <div class="bg-gray-800 p-3 rounded">
+        <h3>Naina</h3>
+        <p class="text-xs text-gray-400">Engaged, observant, drawn to silence</p>
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
-function enterSite() {
+function enter() {
   document.getElementById('ageGate').style.display = 'none';
 }
 function openPlayer() {
@@ -132,11 +135,11 @@ function openPlayer() {
 function closePlayer() {
   document.getElementById('player').classList.add('hidden');
 }
-function toggleCharacters() {
-  document.getElementById('characters').classList.toggle('hidden');
+function toggleCast() {
+  document.getElementById('cast').classList.toggle('hidden');
 }
 function shareReddit() {
-  const title = encodeURIComponent("A moment from a forbidden story that stayed with me…");
+  const title = encodeURIComponent("A forbidden story that stayed with me...");
   const url = encodeURIComponent(window.location.href);
   window.open(`https://www.reddit.com/submit?title=${title}&url=${url}`, '_blank');
 }

@@ -1,172 +1,146 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Forbidden Flames • Erotica</title>
+  <title>OBSIDIAN — Forbidden Stories</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            'erotica-pink': '#ff2e63',
-            'deep-charcoal': '#1a1a1a',
-            'soft-gray': '#f8f9fa',
+            noir: '#0b0c10',
+            shadow: '#14141b',
+            wine: '#5a1a26',
+            gold: '#c6a15b'
           }
         }
       }
     }
   </script>
 </head>
-<body class="bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen text-gray-800 antialiased">
+<body class="bg-noir text-gray-100 overflow-x-hidden">
 
-  <!-- Navigation -->
-  <header class="sticky top-0 z-50 bg-deep-charcoal/95 backdrop-blur-md border-b border-gray-800/50">
-    <nav class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <div class="flex justify-center items-center gap-10 text-sm font-medium tracking-wide">
-        <a href="#home" class="text-gray-300 hover:text-erotica-pink transition-colors duration-200">Home</a>
-        <a href="#story" class="text-gray-300 hover:text-erotica-pink transition-colors duration-200">Story</a>
-        <a href="#characters" class="text-gray-300 hover:text-erotica-pink transition-colors duration-200">Characters</a>
+<!-- AGE GATE -->
+<div id="ageGate" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur">
+  <div class="bg-shadow p-8 rounded-2xl text-center max-w-md border border-white/10">
+    <h1 class="text-2xl font-serif text-gold mb-3">Private Library</h1>
+    <p class="text-sm text-gray-300 mb-6">This platform contains mature, emotionally intense stories. You must be 18+ to enter.</p>
+    <button onclick="enterSite()" class="px-6 py-2 bg-wine rounded-full hover:bg-gold hover:text-black transition">I Am 18+</button>
+  </div>
+</div>
+
+<!-- TOP BAR -->
+<header class="sticky top-0 z-40 bg-black/40 backdrop-blur border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="text-xl font-serif text-gold">OBSIDIAN</div>
+    <input class="bg-shadow px-4 py-1 rounded-full text-sm focus:outline-none" placeholder="Search stories..." />
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="relative h-[70vh] flex items-center">
+  <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-40">
+    <source src="https://www.w3schools.com/howto/rain.mp4" type="video/mp4">
+  </video>
+  <div class="relative z-10 max-w-3xl mx-auto text-center">
+    <h1 class="text-4xl md:text-5xl font-serif mb-4">Forbidden Affairs</h1>
+    <p class="text-gray-300 mb-6">Stories that exist between promises and silence.</p>
+    <button onclick="openPlayer()" class="px-6 py-2 bg-wine rounded-full hover:bg-gold hover:text-black transition">Enter Story</button>
+  </div>
+</section>
+
+<!-- LIBRARY ROW -->
+<section class="px-6 py-10">
+  <h2 class="text-xl font-semibold mb-4">Tonight’s Tension</h2>
+  <div class="flex gap-4 overflow-x-auto pb-4">
+    <div onclick="openPlayer()" class="min-w-[220px] h-[130px] bg-shadow rounded-xl p-4 cursor-pointer hover:scale-105 transition">
+      <p class="font-serif text-gold">A Room With Closed Curtains</p>
+      <p class="text-xs text-gray-400">Affair & Secrecy</p>
+    </div>
+    <div class="min-w-[220px] h-[130px] bg-shadow rounded-xl p-4 opacity-40">
+      <p>Coming Soon</p>
+    </div>
+  </div>
+</section>
+
+<!-- STORY PLAYER MODAL -->
+<div id="player" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/80 backdrop-blur"></div>
+  <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-30">
+    <source src="https://www.w3schools.com/howto/rain.mp4" type="video/mp4">
+  </video>
+
+  <div class="relative z-10 max-w-3xl mx-auto mt-10 bg-black/50 backdrop-blur-xl p-8 rounded-2xl border border-white/10 overflow-y-auto max-h-[80vh]">
+    <button onclick="closePlayer()" class="absolute top-3 right-3 text-gray-400 hover:text-white">✕</button>
+    <h2 class="text-2xl font-serif text-gold mb-4">A Room With Closed Curtains</h2>
+
+    <article id="storyText" class="space-y-4 text-gray-200 leading-relaxed text-sm md:text-base">
+
+<p>The hotel room was small, the kind meant for passing nights and forgotten names. Heavy curtains kept the city out, trapping the soft glow of a single lamp and the hush that followed when two people decided not to speak too loudly about why they were there.</p>
+
+<p>They had arrived separately. That had been the rule. Different elevators, different excuses, different versions of the same truth offered to the world beyond the door. Yet now, in the quiet, those carefully maintained distances felt thin, almost fragile.</p>
+
+<p>He stood near the window, hands in his pockets, watching the faint outline of traffic through the fabric. She sat on the edge of the bed, fingers tracing the seam of the coverlet as if it were a line she should not cross. Between them stretched a space filled with everything they were not supposed to want.</p>
+
+<p>They did not touch. Not at first. They spoke instead of ordinary things—the weather, a delayed flight, the way the city always smelled of rain at night. It was a language of safety, a way to pretend that what brought them together was coincidence rather than choice.</p>
+
+<p>Yet silence kept returning, heavy and intimate. In it lived the awareness of vows spoken elsewhere, of routines and responsibilities waiting beyond these walls. Each pause carried the same unasked question: how long could they keep pretending that this was nothing?</p>
+
+<p>She looked up at him then, really looked, and something in her expression softened. Not with urgency, but with recognition. As if they were both acknowledging the same truth—that what bound them was not recklessness, but a connection that had grown quietly, patiently, until it could no longer be ignored.</p>
+
+<p>The lamp cast warm shadows across the room, blurring the edges of their reflections. It made everything feel suspended, as though time itself had agreed to look the other way for a while. In that light, they seemed less like intruders in each other’s lives and more like two people who had simply arrived late to a conversation meant to happen long ago.</p>
+
+<p>He moved closer, not in haste, but with care, as one approaches something fragile. The distance between them narrowed until it held only the soft hum of the city and the sound of their breathing. It was not the closeness that carried weight, but the restraint within it—the knowledge that every step forward meant stepping further into a secret they would have to carry alone.</p>
+
+<p>They spoke of boundaries, of how this moment could not rewrite the rest of their lives. And yet, in speaking, they revealed how deeply they had already crossed them. The honesty of it was both comforting and unsettling, a reminder that desire does not always announce itself loudly; sometimes it arrives quietly, and by the time it is noticed, it has already settled in.</p>
+
+<p>Outside, a siren passed and faded. Inside, the world felt reduced to lamplight and shadow, to two silhouettes caught in a pause between what was permitted and what was felt. They did not need promises. They needed only the understanding that this was real, even if it had to remain hidden.</p>
+
+<p>When the moment finally ended, as all moments must, it did not do so with drama. It ended with a shared look, a silent agreement to remember and to be careful with the memory. Some connections are not meant to be displayed; they exist in the quiet, in rooms with closed curtains, where the heart is allowed to speak without witnesses.</p>
+
+    </article>
+
+    <div class="mt-6 flex justify-between items-center">
+      <button onclick="shareReddit()" class="px-4 py-2 bg-wine rounded-full text-sm hover:bg-gold hover:text-black transition">Share on Reddit</button>
+      <button onclick="toggleCharacters()" class="text-sm text-gray-300 underline">View Characters</button>
+    </div>
+
+    <!-- CHARACTER PANEL -->
+    <div id="characters" class="hidden mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-shadow p-4 rounded-xl">
+        <h3 class="font-serif text-gold">Arjun</h3>
+        <p class="text-xs text-gray-400">Married • Reserved • Emotionally conflicted</p>
       </div>
-    </nav>
-  </header>
-
-  <!-- Hero / Landing -->
-  <section id="home" class="min-h-screen flex items-center justify-center py-20 px-4">
-    <div class="max-w-5xl mx-auto text-center space-y-10">
-      <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight">
-        <span class="bg-gradient-to-r from-erotica-pink to-pink-600 bg-clip-text text-transparent">
-          Forbidden Flames
-        </span>
-      </h1>
-      <p class="text-xl sm:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-        A slow-burning tale of desire, tension, and surrender between two people who should never have met.
-      </p>
-
-      <div class="flex flex-wrap justify-center gap-6 mt-10">
-        <a href="#story" 
-           class="inline-flex items-center px-8 py-4 bg-erotica-pink text-white font-semibold rounded-full shadow-lg hover:bg-pink-700 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
-          Read the Story
-        </a>
-        <a href="#characters"
-           class="inline-flex items-center px-8 py-4 border-2 border-erotica-pink text-erotica-pink font-semibold rounded-full hover:bg-erotica-pink hover:text-white transition-all duration-300">
-          Meet Alex & Sophia
-        </a>
-      </div>
-
-      <div class="mt-16">
-        <img 
-          src="https://images.unsplash.com/photo-1519125323398-675f398f6978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-          alt="Moody couple in dim light" 
-          class="rounded-2xl shadow-2xl mx-auto max-w-4xl w-full object-cover aspect-[16/9]"
-        >
+      <div class="bg-shadow p-4 rounded-xl">
+        <h3 class="font-serif text-gold">Naina</h3>
+        <p class="text-xs text-gray-400">Engaged • Perceptive • Drawn to silence</p>
       </div>
     </div>
-  </section>
 
-  <!-- Story Section -->
-  <section id="story" class="py-20 bg-white">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg prose-pink max-w-none">
-      <h1 class="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-erotica-pink to-pink-600 bg-clip-text text-transparent">Forbidden Flames</h1>
+  </div>
+</div>
 
-      <p>Alex stepped into the dimly lit bar, the scent of aged whiskey and expensive perfume wrapping around him like a promise. His white dress shirt clung slightly to his shoulders from the summer heat outside, sleeves rolled to the forearms, revealing the corded strength beneath.</p>
+<script>
+function enterSite() {
+  document.getElementById('ageGate').style.display = 'none';
+}
+function openPlayer() {
+  document.getElementById('player').classList.remove('hidden');
+}
+function closePlayer() {
+  document.getElementById('player').classList.add('hidden');
+}
+function toggleCharacters() {
+  document.getElementById('characters').classList.toggle('hidden');
+}
+function shareReddit() {
+  const title = encodeURIComponent("A moment from a forbidden story that stayed with me…");
+  const url = encodeURIComponent(window.location.href);
+  window.open(`https://www.reddit.com/submit?title=${title}&url=${url}`, '_blank');
+}
+</script>
 
-      <figure class="my-10">
-        <img src="https://images.unsplash.com/photo-1605721911519-3d28c021d8b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-             alt="Man in bar looking intense" class="rounded-xl shadow-xl mx-auto">
-        <figcaption class="text-center text-gray-500 mt-3 text-sm">He felt her before he saw her.</figcaption>
-      </figure>
-
-      <p>Across the room, Sophia sat alone at the far end of the bar — black silk dress, one strap slipping off her shoulder, dark hair cascading like ink over bare skin. When their eyes met, the air between them crackled. She didn’t look away. Neither did he.</p>
-
-      <p>Two drinks later they were in the elevator of the hotel above the bar. No words. Just her fingers brushing his wrist, his thumb tracing the inside of her elbow. The moment the doors closed she was against him — soft mouth, hungry hands, the taste of gin and sin.</p>
-
-      <video controls class="my-12 rounded-xl shadow-2xl w-full aspect-video mx-auto">
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-passionate-kiss-in-the-dark-327-large.mp4" type="video/mp4">
-      </video>
-
-      <p>They barely made it to the room. Clothes hit the floor in a careless trail. Her back met the wall, his hands framing her face as he kissed her like he was starving. She arched into him, nails scoring his shoulders, whispering filthy promises against his throat.</p>
-
-      <p>Later — much later — tangled in sheets that smelled of sex and her perfume, Sophia traced the line of his jaw and murmured, “We shouldn’t do this again.”</p>
-
-      <p>Alex smiled against her hair. “We will.”</p>
-
-      <p class="text-right italic mt-16 text-gray-500">~ 480 words</p>
-
-      <!-- Share button -->
-      <div class="mt-16 text-center">
-        <button 
-          onclick="shareToReddit()"
-          class="inline-flex items-center gap-2 px-8 py-4 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-full shadow-lg transition-all duration-300">
-          <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M10 0C4.48 0 0 4.48 0 10c0 4.42 2.865 8.165 6.84 9.49.5.09.68-.217.68-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.37-1.34-3.37-1.34-.454-1.157-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.53 1.03 1.53 1.03.892 1.53 2.34 1.088 2.91.832.09-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.09.39-1.984 1.03-2.683-.103-.253-.447-1.27.098-2.647 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0110 4.844c.85.004 1.705.115 2.504.337 1.91-1.296 2.747-1.026 2.747-1.026.546 1.377.202 2.394.1 2.647.64.699 1.026 1.593 1.026 2.683 0 3.842-2.34 4.687-4.566 4.935.36.308.678.92.678 1.855 0 1.338-.012 2.417-.012 2.745 0 .268.18.58.688.482C17.14 18.163 20 14.418 20 10c0-5.52-4.478-10-10-10z"/>
-          </svg>
-          Share on Reddit
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Characters -->
-  <section id="characters" class="py-20 bg-gradient-to-b from-gray-50 to-white">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-4xl font-bold text-center mb-16">The Lovers</h2>
-
-      <div class="grid md:grid-cols-2 gap-12 lg:gap-20">
-        <!-- Male -->
-        <div class="group relative bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500">
-          <div class="h-96 overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                 alt="Alex - confident man" 
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-          </div>
-          <div class="p-8">
-            <h3 class="text-3xl font-bold text-erotica-pink">Alex</h3>
-            <p class="mt-3 text-gray-600 leading-relaxed">
-              32 • Finance consultant • Controlled exterior, burning intensity beneath. 
-              The kind of man who always gets what he wants — especially when he’s told he can’t have it.
-            </p>
-          </div>
-        </div>
-
-        <!-- Female -->
-        <div class="group relative bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-500">
-          <div class="h-96 overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                 alt="Sophia - seductive woman" 
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-          </div>
-          <div class="p-8">
-            <h3 class="text-3xl font-bold text-erotica-pink">Sophia</h3>
-            <p class="mt-3 text-gray-600 leading-relaxed">
-              29 • Gallery curator • Elegant, sharp-witted, secretly craving someone who can match her fire.
-              She plays the untouchable card — until she doesn’t.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <script>
-    // Simple section smooth scroll (optional enhancement)
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function(e) {
-        e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-          behavior: 'smooth'
-        });
-      });
-    });
-
-    function shareToReddit() {
-      const title = "Forbidden Flames – A steamy short erotica story";
-      const url = window.location.href;
-      const text = "Just read this delicious little 480-word story about forbidden desire... thoughts? 🔥";
-      const redditUrl = `https://reddit.com/submit?title=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
-      window.open(redditUrl, '_blank');
-    }
-  </script>
 </body>
 </html>

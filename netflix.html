@@ -16,15 +16,12 @@ tailwind.config = {
 }
 </script>
 <style>
-/* Hide scrollbar for horizontal rows */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-/* Card hover scale + overlay */
 .card { transition: transform 0.4s ease, box-shadow 0.4s ease; }
 .card:hover { transform: scale(1.06); box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
 .card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%); }
 @media (hover: none) { .card-overlay { opacity: 1 !important; } }
-/* Smooth transitions */
 button { transition: all 0.2s ease; }
 </style>
 </head>
@@ -52,7 +49,7 @@ button { transition: all 0.2s ease; }
 </header>
 
 <!-- HERO -->
-<section class="relative h-[60vh] md:h-[60vh] mt-16">
+<section class="relative h-[70vh] md:h-[85vh] mt-16">
   <video id="heroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-70"></video>
   <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
   <div class="relative z-10 px-6 md:px-16 pt-24 md:pt-40 max-w-3xl">
@@ -97,165 +94,76 @@ button { transition: all 0.2s ease; }
 
 <script>
 // ────────────────────────────────────────────────
-// DATA
+// GLOBAL STATE
 // ────────────────────────────────────────────────
-const stories = [
-  {
-    id: "1",
-    title: "Brother-in-law catches my husband...",
-    subtitle: "A forbidden holiday affair escalates...",
-    tldr: "Thanksgiving peeping turns into full cheating...",
-    category: "Forbidden Affairs",
-    author: "Anonymous",
-    readTime: "10 min",
-    heroVideo: "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3.mp4?cache=1",
-    content: "Thanksgiving weekend, the whole family crammed into our cozy suburban house. The air was thick with the scent of roasted turkey and pumpkin pie, but beneath the festive cheer, tension simmered. My husband, Mark, was busy in the kitchen, helping his mother with the gravy, while I stole glances at his brother, Alex. Alex had always been the bad boy of the family—tattoos peeking from under his shirt, a smirk that promised trouble.\n\nIt started innocently enough. A brush of hands while passing the mashed potatoes, a lingering look across the table. But as the night wore on and the wine flowed, inhibitions loosened. After everyone retired to bed, I found myself in the hallway, heart pounding, as Alex pulled me into the guest room. His hands were rough, urgent, exploring places that hadn't felt such fire in years. We muffled our moans with kisses, the risk of discovery heightening every touch.\n\nBut then, the door creaked open. Mark stood there, eyes wide in shock. Instead of rage, there was something else—curiosity? The affair escalated from there, turning our holiday into a web of secrets and stolen moments. By the end of the weekend, boundaries were shattered, and nothing would ever be the same."
-  },
-  {
-    id: "2",
-    title: "My Best Friend's Mom Seduced Me in the Pool House",
-    subtitle: "Late-night swim turns into lessons...",
-    tldr: "MILF neighbor takes advantage of college break.",
-    category: "Holiday Confessions",
-    author: "CollegeKid22",
-    readTime: "8 min",
-    heroVideo: "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/generated/3eb2be17-b211-4c05-8fa9-5a5eb1d5bc1d/generated_video.mp4?cache=1",
-    content: "It was the summer after my freshman year in college. I was home for break, crashing at my best friend Jake's place while my parents were away. Jake's mom, Mrs. Thompson—call her Lisa—was a stunner: mid-40s, yoga-toned body, with curves that turned heads. I'd always had a crush, but never acted on it.\n\nOne sweltering night, unable to sleep, I headed to their backyard pool for a dip. The water was cool against my skin, but things heated up when Lisa appeared in a skimpy bikini, claiming she couldn't sleep either. We chatted, laughed, and before I knew it, she was suggesting we move to the pool house for privacy.\n\nInside, the air was humid, charged. She pushed me against the wall, her lips on mine, hands roaming. 'I've seen how you look at me,' she whispered, guiding me with experienced touches. It was a whirlwind of passion—her teaching, me eager to learn. We explored each other under the dim lights, the risk of Jake waking up adding to the thrill. That night changed everything; summer breaks would never be the same."
-  }
-];
-
-const media = [
-  {
-    "type": "image",
-    "imageURL": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/xDQISf9bWLEhMvkp-profile-picture.webp",
-    "videoURL": ""
-  },
-  {
-    "type": "video",
-    "imageURL": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/generated/3eb2be17-b211-4c05-8fa9-5a5eb1d5bc1d/preview_image.jpg?cache=1",
-    "videoURL": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/generated/3eb2be17-b211-4c05-8fa9-5a5eb1d5bc1d/generated_video.mp4?cache=1"
-  },
-  {
-    "type": "image",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3_thumbnail.jpg?cache=1",
-    "videoURL": ""
-  },
-  {
-    "type": "video",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3_thumbnail.jpg?cache=1",
-    "videoURL": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3.mp4?cache=1"
-  },
-  {
-    "type": "image",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/5600a1db-5822-4ab9-8696-06dead9dabc2_thumbnail.jpg?cache=1",
-    "videoURL": ""
-  },
-  {
-    "type": "image",
-    "imageURL": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/generated/19acb822-698c-4264-924c-e49dd2b65392/preview_image.jpg?cache=1",
-    "videoURL": ""
-  },
-  {
-    "type": "image",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/8d706eb5-49d2-4077-9a5f-7854683b1074_thumbnail.jpg?cache=1",
-    "videoURL": ""
-  },
-  {
-    "type": "image",
-    "imageURL": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/generated/a47883a7-c3ec-4235-8def-d53179f193e6/preview_image.jpg?cache=1",
-    "videoURL": ""
-  },
-  {
-    "type": "image",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/97aac6c7-ea35-4f9a-be97-e1fe58494b32_thumbnail.jpg?cache=1",
-    "videoURL": ""
-  },
-  {
-    "type": "image",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/images/21d8b635-e385-4cff-8faf-6716975dbd2a.png?cache=1",
-    "videoURL": ""
-  },
-  {
-    "type": "image",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/29d3faff-2210-461e-ada6-64bf90c1ecf0_thumbnail.jpg?cache=1",
-    "videoURL": ""
-  },
-  {
-    "type": "video",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/29d3faff-2210-461e-ada6-64bf90c1ecf0_thumbnail.jpg?cache=1",
-    "videoURL": "https://imagine-public.x.ai/imagine-public/share-videos/29d3faff-2210-461e-ada6-64bf90c1ecf0.mp4?cache=1"
-  },
-  {
-    "type": "image",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/a17e9cee-e7b9-4c84-a21b-fa8fdf5e12eb_thumbnail.jpg?cache=1",
-    "videoURL": ""
-  },
-  {
-    "type": "video",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/a17e9cee-e7b9-4c84-a21b-fa8fdf5e12eb_thumbnail.jpg?cache=1",
-    "videoURL": "https://imagine-public.x.ai/imagine-public/share-videos/a17e9cee-e7b9-4c84-a21b-fa8fdf5e12eb.mp4?cache=1"
-  },
-  {
-    "type": "image",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/8d3f0522-5f95-41b7-a26b-f9d9afec2923_thumbnail.jpg?cache=1",
-    "videoURL": ""
-  },
-  {
-    "type": "video",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/8d3f0522-5f95-41b7-a26b-f9d9afec2923_thumbnail.jpg?cache=1",
-    "videoURL": "https://imagine-public.x.ai/imagine-public/share-videos/8d3f0522-5f95-41b7-a26b-f9d9afec2923.mp4?cache=1"
-  },
-  {
-    "type": "image",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/13853dbd-b030-4614-be7c-17e049121016_thumbnail.jpg?cache=1",
-    "videoURL": ""
-  },
-  {
-    "type": "video",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/13853dbd-b030-4614-be7c-17e049121016_thumbnail.jpg?cache=1",
-    "videoURL": "https://imagine-public.x.ai/imagine-public/share-videos/13853dbd-b030-4614-be7c-17e049121016.mp4?cache=1"
-  },
-  // Added generated character images
-  {
-    "type": "image",
-    "imageURL": "https://advice.cdn.betterhelp.com/advice/images/betterhelp/3753/8caf3b737b5ef5af9961f85c18ffb623-couple-gaze-at-eachother-mountains-in-background_l_sm.jpg",
-    "videoURL": ""
-  },
-  {
-    "type": "image",
-    "imageURL": "https://external-preview.redd.it/Ra895TqBFK7C2DkmyBIn3fb7G3gydJxOxcGsSnn8OUU.jpg?width=640&crop=smart&auto=webp&s=eb0933df2756265241fbf1deeca657c3ca70c1f9",
-    "videoURL": ""
-  }
-];
-
+let stories = [];
 let currentStoryId = null;
 
 // ────────────────────────────────────────────────
-// HELPERS
+// LOAD DATA FROM stories.json
+// ────────────────────────────────────────────────
+async function loadStories() {
+  try {
+    const response = await fetch('storiesgrok.json');
+    if (!response.ok) throw new Error(`HTTP error ${response.status}`);
+    stories = await response.json();
+
+    // Optional: sort newest first (assuming id is numeric)
+    stories.sort((a, b) => Number(b.id) - Number(a.id));
+
+    buildLibrary();
+    if (stories.length > 0) {
+      setHeroStory(stories[0]);
+    }
+  } catch (err) {
+    console.error("Failed to load stories.json:", err);
+    document.getElementById('library').innerHTML = 
+      '<p class="text-red-500 text-center text-xl py-10">Error loading stories. Please check if stories.json exists and is valid JSON.</p>';
+  }
+}
+
+function setHeroStory(story) {
+  if (!story) return;
+  currentStoryId = story.id;
+  document.getElementById('heroTitle').textContent = story.title;
+  document.getElementById('heroSubtitle').textContent = story.subtitle || story.tldr || '';
+
+  const hv = document.getElementById('heroVideo');
+  if (story.heroVideo) {
+    hv.src = story.heroVideo;
+    hv.load();
+    hv.play().catch(() => {});
+  }
+}
+
+// ────────────────────────────────────────────────
+// CONTINUE READING
 // ────────────────────────────────────────────────
 function getContinueReading() {
-  try { return JSON.parse(localStorage.getItem('continueReading') || '[]'); } catch { return []; }
+  try { return JSON.parse(localStorage.getItem('continueReading') || '[]'); } 
+  catch { return []; }
 }
 
 function addToContinueReading(id) {
   let list = getContinueReading();
-  list = list.filter(x => x !== id); // move to front
+  list = list.filter(x => x !== id);
   list.unshift(id);
   if (list.length > 10) list.pop();
   localStorage.setItem('continueReading', JSON.stringify(list));
 }
 
-function buildCard(s) {
-  const m = media[Math.floor(Math.random() * media.length)];
-  const hasVideo = m.type === 'video' && m.videoURL;
-
+// ────────────────────────────────────────────────
+// BUILD LIBRARY CARDS & ROWS
+// ────────────────────────────────────────────────
+function buildCard(story) {
+  const imgSrc = story.heroImage || `https://via.placeholder.com/240x160/1a1a1a/cccccc?text=${encodeURIComponent(story.title.slice(0,12))}`;
+  
   return `
-    <div class="min-w-[200px] sm:min-w-[240px] h-[140px] sm:h-[160px] relative rounded-xl overflow-hidden card shadow-lg cursor-pointer" data-id="${s.id}">
-      <img src="${m.imageURL || 'placeholder.jpg'}" class="absolute inset-0 w-full h-full object-cover" alt="">
-      ${hasVideo ? `<video muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300" src="${m.videoURL}"></video>` : ''}
+    <div class="min-w-[200px] sm:min-w-[240px] h-[140px] sm:h-[160px] relative rounded-xl overflow-hidden card shadow-lg cursor-pointer" data-id="${story.id}">
+      <img src="${imgSrc}" class="absolute inset-0 w-full h-full object-cover" alt="${story.title}">
       <div class="card-overlay absolute inset-0 flex flex-col justify-end p-4 text-shadow">
-        <div class="font-bold text-sm sm:text-base line-clamp-2">${s.title}</div>
-        <div class="text-xs text-gray-300 mt-1">${s.readTime}</div>
+        <div class="font-bold text-sm sm:text-base line-clamp-2">${story.title}</div>
+        <div class="text-xs text-gray-300 mt-1">${story.readTime || '—'}</div>
       </div>
     </div>`;
 }
@@ -279,22 +187,23 @@ function buildLibrary() {
   const contIds = getContinueReading();
   const continueStories = stories.filter(s => contIds.includes(s.id))
     .sort((a,b) => contIds.indexOf(a.id) - contIds.indexOf(b.id));
+
   if (continueStories.length) {
     library.innerHTML += buildRow('Continue Reading', continueStories);
   }
 
-  // Latest
-  const latest = [...stories].sort((a,b) => Number(b.id) - Number(a.id));
+  // Latest Stories
+  const latest = [...stories].slice(0, 12);
   library.innerHTML += buildRow('Latest Stories', latest);
 
-  // Categories
-  const categories = [...new Set(stories.map(s => s.category))];
+  // Category rows
+  const categories = [...new Set(stories.map(s => s.category).filter(Boolean))];
   categories.forEach(cat => {
     const inCat = stories.filter(s => s.category === cat);
     library.innerHTML += buildRow(cat, inCat);
   });
 
-  // Attach click listeners
+  // Card click handlers
   document.querySelectorAll('.card').forEach(card => {
     card.addEventListener('click', () => {
       const id = card.dataset.id;
@@ -304,7 +213,7 @@ function buildLibrary() {
 }
 
 // ────────────────────────────────────────────────
-// PLAYER
+// PLAYER MODAL
 // ────────────────────────────────────────────────
 function openPlayer(id) {
   const story = stories.find(s => s.id === id);
@@ -314,33 +223,37 @@ function openPlayer(id) {
   addToContinueReading(id);
 
   document.getElementById('playerTitle').textContent = story.title;
-  document.getElementById('playerContent').innerHTML = story.content
+  document.getElementById('playerContent').innerHTML = (story.content || '')
     .split('\n')
     .map(line => `<p class="text-lg">${line.trim()}</p>`)
     .join('');
 
   const pv = document.getElementById('playerVideo');
-  pv.src = story.heroVideo || '';
-  pv.load();
-  pv.play().catch(() => {});
+  if (story.heroVideo) {
+    pv.src = story.heroVideo;
+    pv.load();
+    pv.play().catch(() => {});
+  } else {
+    pv.src = '';
+  }
 
-  // Characters panel
+  // Characters from JSON
   const panel = document.getElementById('characterPanel');
   panel.innerHTML = '<h3 class="text-2xl font-serif mb-6 text-gold">Characters</h3>';
-  // Use the last two added images for characters
-  const charMedia = media.slice(-2); // The generated ones
-  charMedia.forEach((c, i) => {
-    const isVid = c.type === 'video' && c.videoURL;
-    panel.innerHTML += `
-      <div class="bg-gray-900 rounded-xl p-4 mb-5 shadow">
-        ${isVid ? 
-          `<video autoplay muted loop playsinline class="w-full h-48 object-cover rounded-lg mb-3" src="${c.videoURL}"></video>` :
-          `<img src="${c.imageURL}" class="w-full h-48 object-cover rounded-lg mb-3" alt="">`
-        }
-        <h4 class="text-gold font-serif text-lg">Character ${i+1}</h4>
-        <p class="text-sm text-gray-400 mt-1">Placeholder traits • Mysterious • Seductive</p>
-      </div>`;
-  });
+
+  if (story.characters?.length) {
+    story.characters.forEach(char => {
+      const imgSrc = char.image || `https://via.placeholder.com/300x180?text=${encodeURIComponent(char.name || '?')}`;
+      panel.innerHTML += `
+        <div class="bg-gray-900 rounded-xl p-4 mb-5 shadow">
+          <img src="${imgSrc}" class="w-full h-48 object-cover rounded-lg mb-3" alt="${char.name || 'Character'}">
+          <h4 class="text-gold font-serif text-lg">${char.name || 'Unnamed'}</h4>
+          <p class="text-sm text-gray-400 mt-1">${char.description || 'No description provided'}</p>
+        </div>`;
+    });
+  } else {
+    panel.innerHTML += '<p class="text-gray-500">No character information available</p>';
+  }
 
   document.getElementById('player').classList.remove('hidden');
 }
@@ -361,27 +274,9 @@ function shareReddit() {
 }
 
 // ────────────────────────────────────────────────
-// HOVER VIDEO PREVIEW
+// HOVER VIDEO PREVIEW (optional – disabled since no card videos anymore)
+// You can remove this block if you don't plan to add video previews to cards
 // ────────────────────────────────────────────────
-document.addEventListener('mouseover', e => {
-  const card = e.target.closest('.card');
-  if (!card) return;
-  const vid = card.querySelector('video');
-  if (vid) {
-    vid.style.opacity = '1';
-    vid.play().catch(()=>{});
-  }
-});
-
-document.addEventListener('mouseout', e => {
-  const card = e.target.closest('.card');
-  if (!card) return;
-  const vid = card.querySelector('video');
-  if (vid) {
-    vid.style.opacity = '0';
-    vid.pause();
-  }
-});
 
 // ────────────────────────────────────────────────
 // INIT
@@ -403,27 +298,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Hero button
   if (heroPlayBtn) {
     heroPlayBtn.addEventListener('click', () => {
       if (currentStoryId) openPlayer(currentStoryId);
     });
   }
 
-  // Load library
-  buildLibrary();
-
-  // Set initial hero (first story)
-  if (stories.length > 0) {
-    const hero = stories[0];
-    currentStoryId = hero.id;
-    document.getElementById('heroTitle').textContent = hero.title;
-    document.getElementById('heroSubtitle').textContent = hero.subtitle;
-    const hv = document.getElementById('heroVideo');
-    hv.src = hero.heroVideo;
-    hv.load();
-    hv.play().catch(() => {});
-  }
+  // Load data and build UI
+  loadStories();
 });
 </script>
 </body>

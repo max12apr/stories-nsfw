@@ -16,207 +16,315 @@ tailwind.config = {
 }
 </script>
 <style>
-/* Scrollbar hide for horizontal rows */
+/* Hide scrollbar for horizontal rows */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-/* Hover card scaling */
-.card:hover { transform: scale(1.05); transition: 0.3s; cursor: pointer; }
-/* Video autoplay card */
-.card video { position: absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; }
-.card img { width:100%; height:100%; object-fit:cover; border-radius:0.5rem; }
+/* Card hover scale + overlay */
+.card { transition: transform 0.4s ease, box-shadow 0.4s ease; }
+.card:hover { transform: scale(1.06); box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+.card-overlay { background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%); }
+@media (hover: none) { .card-overlay { opacity: 1 !important; } }
+/* Smooth transitions */
+button { transition: all 0.2s ease; }
 </style>
 </head>
-<body class="bg-dark text-white font-body">
+<body class="bg-dark text-white font-body min-h-screen">
 
 <!-- AGE GATE -->
 <div id="ageGate" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90">
-  <div class="bg-dark p-8 rounded text-center border border-white/20">
-    <h2 class="text-2xl mb-3 font-serif">Private Library</h2>
-    <p class="text-sm text-gray-400 mb-6">Mature themes. 18+ only.</p>
-    <button onclick="enter()" class="bg-netflix px-6 py-2 rounded font-semibold">Enter</button>
+  <div class="bg-dark p-10 rounded-xl text-center border border-white/20 max-w-md w-11/12 shadow-2xl">
+    <h2 class="text-3xl mb-4 font-serif">Private Library</h2>
+    <p class="text-gray-400 mb-8">This content contains mature themes. You must be 18+ to enter.</p>
+    <button id="enterBtn" class="bg-netflix hover:bg-red-700 px-10 py-4 rounded font-bold text-lg transition">Enter</button>
   </div>
 </div>
 
 <!-- NAVBAR -->
-<header class="fixed top-0 w-full z-40 bg-black/80 backdrop-blur">
-  <div class="flex items-center gap-8 px-8 py-4">
-    <div class="text-netflix font-bold text-2xl font-serif">OBSIDIAN</div>
+<header class="fixed top-0 left-0 right-0 z-40 bg-black/90 backdrop-blur-md">
+  <div class="flex items-center justify-between px-6 md:px-12 py-5">
+    <div class="text-netflix font-bold text-3xl font-serif tracking-tight">OBSIDIAN</div>
+    <nav class="hidden md:flex gap-8 text-sm font-medium">
+      <a href="#" class="hover:text-gray-200 transition">Home</a>
+      <a href="#" class="hover:text-gray-200 transition">Stories</a>
+      <a href="#" class="hover:text-gray-200 transition">My List</a>
+    </nav>
   </div>
 </header>
 
 <!-- HERO -->
-<section class="relative h-[60vh] mt-16">
-  <video id="heroVideo" autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-60"></video>
-  <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-  <div class="relative z-10 px-12 pt-20 max-w-xl">
-    <h1 id="heroTitle" class="text-4xl font-bold mb-4 font-serif">Loading Story...</h1>
-    <p id="heroSubtitle" class="text-gray-300 mb-6">Please wait</p>
-    <div class="flex gap-3">
-      <button onclick="openPlayer(currentStoryId)" class="bg-white text-black px-6 py-2 rounded font-semibold">▶ Read</button>
+<section class="relative h-[70vh] md:h-[85vh] mt-16">
+  <video id="heroVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-70"></video>
+  <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+  <div class="relative z-10 px-6 md:px-16 pt-24 md:pt-40 max-w-3xl">
+    <h1 id="heroTitle" class="text-4xl md:text-6xl font-bold mb-4 font-serif leading-tight">Loading Story...</h1>
+    <p id="heroSubtitle" class="text-lg md:text-xl text-gray-300 mb-8 max-w-2xl">Please wait</p>
+    <div class="flex flex-wrap gap-4">
+      <button id="heroPlayBtn" class="bg-white hover:bg-gray-200 text-black px-8 py-3 md:py-4 rounded font-bold text-lg flex items-center gap-3 transition">
+        ▶ Read
+      </button>
+      <button class="bg-gray-700/60 hover:bg-gray-600/80 px-8 py-3 md:py-4 rounded font-bold text-lg border border-gray-500 transition">
+        + My List
+      </button>
     </div>
   </div>
 </section>
 
 <!-- LIBRARY ROWS -->
-<section id="library" class="px-8 mt-8 space-y-10"></section>
+<section id="library" class="px-6 md:px-16 py-12 space-y-12"></section>
 
 <!-- STORY PLAYER MODAL -->
-<div id="player" class="fixed inset-0 bg-black/95 z-50 hidden overflow-y-auto flex justify-center items-start pt-12">
-  <div class="bg-dark rounded-lg flex max-w-6xl w-full shadow-lg">
-    
-    <!-- LEFT: Character Panel -->
-    <div id="characterPanel" class="w-1/3 bg-gray-900 p-4 space-y-6 overflow-y-auto">
-      <!-- Dynamic characters here -->
+<div id="player" class="fixed inset-0 bg-black/95 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-dark rounded-2xl flex flex-col md:flex-row w-full max-w-7xl h-[90vh] shadow-2xl overflow-hidden border border-gray-800">
+    <!-- LEFT: Characters Side Panel -->
+    <div id="characterPanel" class="w-full md:w-1/4 bg-gray-950 p-6 overflow-y-auto border-b md:border-b-0 md:border-r border-gray-800">
+      <h3 class="text-2xl font-serif mb-6 text-gold">Characters</h3>
+      <!-- Dynamic content -->
     </div>
-
-    <!-- RIGHT: Story Content -->
-    <div class="w-2/3 p-6 relative">
-      <button onclick="closePlayer()" class="absolute top-3 right-3 text-3xl text-gray-300 hover:text-white z-20">✕</button>
-      <video id="playerVideo" autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-20 z-0"></video>
-      <div class="relative z-10">
-        <h2 id="playerTitle" class="text-2xl font-serif mb-4"></h2>
-        <div id="playerContent" class="space-y-4 text-gray-200 leading-relaxed overflow-y-auto max-h-[80vh]"></div>
-        <div class="mt-6 flex justify-between">
-          <button onclick="shareReddit()" class="bg-netflix px-4 py-2 rounded">Share on Reddit</button>
-        </div>
+    <!-- RIGHT: Story -->
+    <div class="relative flex-1 p-6 md:p-10 overflow-hidden flex flex-col">
+      <button onclick="closePlayer()" class="absolute top-4 right-4 md:top-6 md:right-8 text-4xl text-gray-400 hover:text-white z-30 transition">×</button>
+      <video id="playerVideo" autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-20 z-0"></video>
+      <div class="relative z-10 overflow-y-auto flex-1 pr-2 custom-scroll">
+        <h2 id="playerTitle" class="text-3xl md:text-4xl font-serif mb-6 leading-tight"></h2>
+        <div id="playerContent" class="space-y-6 text-gray-200 leading-relaxed text-lg"></div>
+      </div>
+      <div class="mt-6 pt-4 border-t border-gray-800">
+        <button onclick="shareReddit()" class="bg-netflix hover:bg-red-700 px-6 py-3 rounded font-semibold transition">Share on Reddit</button>
       </div>
     </div>
-
   </div>
 </div>
 
 <script>
-// --- Inline JSON Data ---
+// ────────────────────────────────────────────────
+// DATA
+// ────────────────────────────────────────────────
 const stories = [
   {
-    "id": "1",
-    "title": "Brother-in-law catches my husband...",
-    "subtitle": "A forbidden holiday affair escalates...",
-    "tldr": "Thanksgiving peeping turns into full cheating...",
-    "category": "Forbidden Affairs",
-    "author": "Anonymous",
-    "readTime": "10 min",
-    "heroVideo": "https://www.w3schools.com/howto/rain.mp4",
-    "images": [
-      "https://thumbs.dreamstime.com/b/delicious-thanksgiving-dinner-table-roasted-turkey-seasonal-decor-cozy-thanksgiving-dinner-setup-roasted-turkey-425226209.jpg",
-      "https://images.stockcake.com/public/7/6/5/76522662-fca3-46a4-97f8-afc589214790_large/family-christmas-gathering-stockcake.jpg"
-    ],
-    "content": "Thanksgiving weekend, whole family crammed into our house... [full text here]"
+    id: "1",
+    title: "Brother-in-law catches my husband...",
+    subtitle: "A forbidden holiday affair escalates...",
+    tldr: "Thanksgiving peeping turns into full cheating...",
+    category: "Forbidden Affairs",
+    author: "Anonymous",
+    readTime: "10 min",
+    heroVideo: "https://www.w3schools.com/howto/rain.mp4",
+    content: "Thanksgiving weekend, whole family crammed into our house...\n\n[full story text placeholder]\n\nIt was intense."
   },
   {
-    "id": "2",
-    "title": "My Best Friend's Mom Seduced Me in the Pool House",
-    "subtitle": "Late-night swim turns into lessons...",
-    "tldr": "MILF neighbor takes advantage of college break.",
-    "category": "Holiday Confessions",
-    "author": "CollegeKid22",
-    "readTime": "8 min",
-    "heroVideo": "https://www.w3schools.com/howto/rain.mp4",
-    "images": [
-      "https://images.unsplash.com/photo-1560272564-c83b19b38190",
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
-    ],
-    "content": "It was the summer after freshman year... [full text here]"
+    id: "2",
+    title: "My Best Friend's Mom Seduced Me in the Pool House",
+    subtitle: "Late-night swim turns into lessons...",
+    tldr: "MILF neighbor takes advantage of college break.",
+    category: "Holiday Confessions",
+    author: "CollegeKid22",
+    readTime: "8 min",
+    heroVideo: "https://www.w3schools.com/howto/rain.mp4",
+    content: "It was the summer after freshman year...\n\n[full story text placeholder]\n\nThings got heated fast."
   }
 ];
 
 const media = [
-  {
-    "type": "image",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3_thumbnail.jpg",
-    "videoURL": ""
-  },
-  {
-    "type": "video",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3_thumbnail.jpg",
-    "videoURL": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/xDQISf9bWLEhMvkp-profile-picture.webp"
-  }
+  { type: "image", imageURL: "https://images.unsplash.com/photo-1557683316-973673baf926?w=800" },
+  { type: "video", imageURL: "https://images.unsplash.com/photo-1557683316-973673baf926?w=800", videoURL: "https://www.w3schools.com/howto/rain.mp4" }
 ];
 
 let currentStoryId = null;
 
-// --- Functions ---
-function enter() { document.getElementById('ageGate').style.display='none'; }
+// ────────────────────────────────────────────────
+// HELPERS
+// ────────────────────────────────────────────────
+function getContinueReading() {
+  try { return JSON.parse(localStorage.getItem('continueReading') || '[]'); } catch { return []; }
+}
+
+function addToContinueReading(id) {
+  let list = getContinueReading();
+  list = list.filter(x => x !== id); // move to front
+  list.unshift(id);
+  if (list.length > 10) list.pop();
+  localStorage.setItem('continueReading', JSON.stringify(list));
+}
+
+function buildCard(s) {
+  const m = media[Math.floor(Math.random() * media.length)];
+  const hasVideo = m.type === 'video' && m.videoURL;
+
+  return `
+    <div class="min-w-[200px] sm:min-w-[240px] h-[140px] sm:h-[160px] relative rounded-xl overflow-hidden card shadow-lg cursor-pointer" data-id="${s.id}">
+      <img src="${m.imageURL}" class="absolute inset-0 w-full h-full object-cover" alt="">
+      ${hasVideo ? `<video muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300" src="${m.videoURL}"></video>` : ''}
+      <div class="card-overlay absolute inset-0 flex flex-col justify-end p-4 text-shadow">
+        <div class="font-bold text-sm sm:text-base line-clamp-2">${s.title}</div>
+        <div class="text-xs text-gray-300 mt-1">${s.readTime}</div>
+      </div>
+    </div>`;
+}
+
+function buildRow(title, storyList) {
+  if (!storyList?.length) return '';
+  return `
+    <div>
+      <h2 class="text-2xl font-medium mb-4">${title}</h2>
+      <div class="flex gap-4 overflow-x-auto no-scrollbar pb-4 snap-x snap-mandatory">
+        ${storyList.map(buildCard).join('')}
+      </div>
+    </div>`;
+}
 
 function buildLibrary() {
   const library = document.getElementById('library');
-  const categories = [...new Set(stories.map(s=>s.category))];
-  categories.forEach(cat=>{
-    const row = document.createElement('div');
-    row.innerHTML = `<h2 class="text-xl mb-3">${cat}</h2>
-      <div class="flex gap-3 overflow-x-auto no-scrollbar">
-        ${stories.filter(s=>s.category===cat).map(s=>{
-          // pick a media image/video randomly
-          const mediaItem = media[Math.floor(Math.random()*media.length)];
-          return `<div class="min-w-[220px] h-[130px] relative rounded-lg overflow-hidden card" onclick="openPlayer('${s.id}')">
-            <img src="${mediaItem.imageURL}" class="absolute inset-0 w-full h-full object-cover z-0"/>
-            ${mediaItem.videoURL?`<video muted loop class="absolute inset-0 w-full h-full object-cover opacity-0 z-10">${mediaItem.videoURL}</video>`:''}
-            <div class="absolute bottom-0 left-0 p-2 bg-black/50 w-full text-xs text-gray-200">${s.title}</div>
-          </div>`;
-        }).join('')}
-      </div>`;
-    library.appendChild(row);
+  library.innerHTML = '';
+
+  // Continue Reading
+  const contIds = getContinueReading();
+  const continueStories = stories.filter(s => contIds.includes(s.id))
+    .sort((a,b) => contIds.indexOf(a.id) - contIds.indexOf(b.id));
+  if (continueStories.length) {
+    library.innerHTML += buildRow('Continue Reading', continueStories);
+  }
+
+  // Latest
+  const latest = [...stories].sort((a,b) => Number(b.id) - Number(a.id));
+  library.innerHTML += buildRow('Latest Stories', latest);
+
+  // Categories
+  const categories = [...new Set(stories.map(s => s.category))];
+  categories.forEach(cat => {
+    const inCat = stories.filter(s => s.category === cat);
+    library.innerHTML += buildRow(cat, inCat);
   });
 
-  // set hero
-  const hero = stories[0];
-  currentStoryId = hero.id;
-  document.getElementById('heroTitle').innerText = hero.title;
-  document.getElementById('heroSubtitle').innerText = hero.subtitle;
-  document.getElementById('heroVideo').src = hero.heroVideo;
+  // Attach click listeners
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', () => {
+      const id = card.dataset.id;
+      if (id) openPlayer(id);
+    });
+  });
 }
 
+// ────────────────────────────────────────────────
+// PLAYER
+// ────────────────────────────────────────────────
 function openPlayer(id) {
-  const story = stories.find(s=>s.id===id);
-  currentStoryId = id;
-  document.getElementById('playerTitle').innerText = story.title;
-  document.getElementById('playerContent').innerHTML = story.content.split('\n').map(p=>`<p>${p}</p>`).join('');
-  document.getElementById('playerVideo').src = story.heroVideo;
+  const story = stories.find(s => s.id === id);
+  if (!story) return;
 
-  // left character panel
-  const charPanel = document.getElementById('characterPanel');
-  charPanel.innerHTML = '';
-  // For prototype, pick two random media items as characters
-  const chars = [media[Math.floor(Math.random()*media.length)], media[Math.floor(Math.random()*media.length)]];
-  chars.forEach((c,i)=>{
-    charPanel.innerHTML += `
-      <div class="bg-gray-800 rounded p-2 flex flex-col items-center">
-        <img src="${c.imageURL}" class="w-full h-40 object-cover rounded mb-2"/>
-        <h3 class="text-gold font-serif">Character ${i+1}</h3>
-        <p class="text-xs text-gray-400">Traits placeholder</p>
+  currentStoryId = id;
+  addToContinueReading(id);
+
+  document.getElementById('playerTitle').textContent = story.title;
+  document.getElementById('playerContent').innerHTML = story.content
+    .split('\n')
+    .map(line => `<p class="text-lg">${line.trim()}</p>`)
+    .join('');
+
+  const pv = document.getElementById('playerVideo');
+  pv.src = story.heroVideo || '';
+  pv.load();
+  pv.play().catch(() => {});
+
+  // Characters panel
+  const panel = document.getElementById('characterPanel');
+  panel.innerHTML = '<h3 class="text-2xl font-serif mb-6 text-gold">Characters</h3>';
+  const chars = [media[0], media[1]]; // demo
+  chars.forEach((c, i) => {
+    const isVid = c.type === 'video' && c.videoURL;
+    panel.innerHTML += `
+      <div class="bg-gray-900 rounded-xl p-4 mb-5 shadow">
+        ${isVid ? 
+          `<video autoplay muted loop playsinline class="w-full h-48 object-cover rounded-lg mb-3" src="${c.videoURL}"></video>` :
+          `<img src="${c.imageURL}" class="w-full h-48 object-cover rounded-lg mb-3" alt="">`
+        }
+        <h4 class="text-gold font-serif text-lg">Character ${i+1}</h4>
+        <p class="text-sm text-gray-400 mt-1">Placeholder traits • Mysterious • Seductive</p>
       </div>`;
   });
 
   document.getElementById('player').classList.remove('hidden');
 }
 
-function closePlayer() { document.getElementById('player').classList.add('hidden'); }
+function closePlayer() {
+  document.getElementById('player').classList.add('hidden');
+  const pv = document.getElementById('playerVideo');
+  pv.pause();
+  pv.currentTime = 0;
+}
 
 function shareReddit() {
-  const story = stories.find(s=>s.id===currentStoryId);
-  const title = encodeURIComponent("A forbidden story: "+story.title);
+  const story = stories.find(s => s.id === currentStoryId);
+  if (!story) return;
+  const title = encodeURIComponent(`A forbidden story: ${story.title}`);
   const url = encodeURIComponent(window.location.href);
   window.open(`https://www.reddit.com/submit?title=${title}&url=${url}`, '_blank');
 }
 
-// Hover video logic
-document.addEventListener('mouseover', e=>{
-  if(e.target.closest('.card') && e.target.closest('.card').querySelector('video')){
-    const vid = e.target.closest('.card').querySelector('video');
-    vid.style.opacity=1;
-    vid.play();
+// ────────────────────────────────────────────────
+// HOVER VIDEO PREVIEW
+// ────────────────────────────────────────────────
+document.addEventListener('mouseover', e => {
+  const card = e.target.closest('.card');
+  if (!card) return;
+  const vid = card.querySelector('video');
+  if (vid) {
+    vid.style.opacity = '1';
+    vid.play().catch(()=>{});
   }
 });
-document.addEventListener('mouseout', e=>{
-  if(e.target.closest('.card') && e.target.closest('.card').querySelector('video')){
-    const vid = e.target.closest('.card').querySelector('video');
-    vid.style.opacity=0;
+
+document.addEventListener('mouseout', e => {
+  const card = e.target.closest('.card');
+  if (!card) return;
+  const vid = card.querySelector('video');
+  if (vid) {
+    vid.style.opacity = '0';
     vid.pause();
   }
 });
 
-// --- INIT ---
-document.addEventListener('DOMContentLoaded', buildLibrary);
+// ────────────────────────────────────────────────
+// INIT
+// ────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Age gate
+  const ageGate = document.getElementById('ageGate');
+  const enterBtn = document.getElementById('enterBtn');
+  const heroPlayBtn = document.getElementById('heroPlayBtn');
+
+  if (localStorage.getItem('over18') === 'true') {
+    ageGate.style.display = 'none';
+  }
+
+  if (enterBtn) {
+    enterBtn.addEventListener('click', () => {
+      ageGate.style.display = 'none';
+      localStorage.setItem('over18', 'true');
+    });
+  }
+
+  // Hero button
+  if (heroPlayBtn) {
+    heroPlayBtn.addEventListener('click', () => {
+      if (currentStoryId) openPlayer(currentStoryId);
+    });
+  }
+
+  // Load library
+  buildLibrary();
+
+  // Set initial hero (first story)
+  if (stories.length > 0) {
+    const hero = stories[0];
+    currentStoryId = hero.id;
+    document.getElementById('heroTitle').textContent = hero.title;
+    document.getElementById('heroSubtitle').textContent = hero.subtitle;
+    const hv = document.getElementById('heroVideo');
+    hv.src = hero.heroVideo;
+    hv.load();
+    hv.play().catch(() => {});
+  }
+});
 </script>
 </body>
 </html>

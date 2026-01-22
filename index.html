@@ -1,38 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>OBSIDIAN – Netflix of Forbidden Stories</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            netflix: '#e50914',
-            dark: '#141414'
-          }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OBSIDIAN – Netflix of Forbidden Stories</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          netflix: '#e50914',
+          dark: '#141414',
+          gold: '#c6a15b'
+        },
+        fontFamily: {
+          serif: ['Playfair Display', 'serif'],
+          body: ['Inter', 'sans-serif']
         }
       }
     }
-  </script>
+  }
+</script>
+<style>
+  /* Hide scrollbar for horizontal rows */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .card:hover { transform: scale(1.05); transition: 0.3s; cursor: pointer; }
+</style>
 </head>
-<body class="bg-dark text-white">
+<body class="bg-dark text-white font-body">
 
 <!-- AGE GATE -->
 <div id="ageGate" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90">
   <div class="bg-dark p-8 rounded text-center border border-white/20">
-    <h2 class="text-2xl mb-3">Private Library</h2>
+    <h2 class="text-2xl mb-3 font-serif">Private Library</h2>
     <p class="text-sm text-gray-400 mb-6">Mature themes. 18+ only.</p>
-    <button onclick="enter()" class="bg-netflix px-6 py-2 rounded">Enter</button>
+    <button onclick="enter()" class="bg-netflix px-6 py-2 rounded font-semibold">Enter</button>
   </div>
 </div>
 
 <!-- NAVBAR -->
 <header class="fixed top-0 w-full z-40 bg-black/80 backdrop-blur">
   <div class="flex items-center gap-8 px-8 py-4">
-    <div class="text-netflix font-bold text-2xl">OBSIDIAN</div>
+    <div class="text-netflix font-bold text-2xl font-serif">OBSIDIAN</div>
     <nav class="flex gap-4 text-sm text-gray-300">
       <span class="cursor-pointer hover:text-white">Home</span>
       <span class="cursor-pointer hover:text-white">Series</span>
@@ -43,107 +54,138 @@
 </header>
 
 <!-- HERO -->
-<section class="relative h-[80vh]">
-  <video autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-60">
-    <source src="https://www.w3schools.com/howto/rain.mp4" type="video/mp4">
+<section class="relative h-[70vh] mt-16">
+  <video id="heroVideo" autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-60">
+    <source src="" type="video/mp4">
   </video>
   <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-  <div class="relative z-10 px-12 pt-40 max-w-xl">
-    <h1 class="text-4xl font-bold mb-4">A Room With Closed Curtains</h1>
-    <p class="text-gray-300 mb-6">
-      An intense story of secrecy, longing, and the silence between promises.
-    </p>
+  <div class="relative z-10 px-12 pt-28 max-w-xl">
+    <h1 id="heroTitle" class="text-4xl font-bold mb-4 font-serif">Loading Story...</h1>
+    <p id="heroSubtitle" class="text-gray-300 mb-6">Please wait</p>
     <div class="flex gap-3">
-      <button onclick="openPlayer()" class="bg-white text-black px-6 py-2 rounded font-semibold">▶ Play</button>
-      <button class="bg-gray-700 px-6 py-2 rounded">More Info</button>
+      <button onclick="openPlayer(currentStoryId)" class="bg-white text-black px-6 py-2 rounded font-semibold">▶ Read</button>
     </div>
   </div>
 </section>
 
 <!-- ROWS -->
-<section class="px-8 mt-8 space-y-10">
+<section id="library" class="px-8 mt-8 space-y-10"></section>
 
-  <div>
-    <h2 class="text-xl mb-3">Forbidden Affairs</h2>
-    <div class="flex gap-3 overflow-x-auto">
-      <div onclick="openPlayer()" class="min-w-[220px] h-[120px] bg-gray-800 rounded hover:scale-110 transition cursor-pointer p-3">
-        <p class="text-sm">A Room With Closed Curtains</p>
-      </div>
-      <div class="min-w-[220px] h-[120px] bg-gray-800 rounded opacity-40"></div>
-      <div class="min-w-[220px] h-[120px] bg-gray-800 rounded opacity-40"></div>
-    </div>
-  </div>
-
-  <div>
-    <h2 class="text-xl mb-3">Power & Control</h2>
-    <div class="flex gap-3 overflow-x-auto">
-      <div class="min-w-[220px] h-[120px] bg-gray-800 rounded opacity-40"></div>
-      <div class="min-w-[220px] h-[120px] bg-gray-800 rounded opacity-40"></div>
-    </div>
-  </div>
-
-</section>
-
-<!-- PLAYER MODAL -->
+<!-- STORY PLAYER MODAL -->
 <div id="player" class="fixed inset-0 bg-black/90 z-50 hidden overflow-y-auto">
   <button onclick="closePlayer()" class="absolute top-5 right-5 text-3xl">✕</button>
-
-  <div class="max-w-3xl mx-auto mt-20 p-8 bg-black/70 rounded">
-    <h2 class="text-2xl mb-4">A Room With Closed Curtains</h2>
-
-    <p class="text-gray-300 leading-relaxed text-sm">
-      The hotel room was small, meant for passing nights and unspoken truths. 
-      Heavy curtains shut the world out, leaving only lamplight and the quiet tension
-      between two people who had arrived separately, carefully, carrying lives that
-      could not touch this moment.  
-      <br><br>
-      They spoke of ordinary things to hide the extraordinary pull between them,
-      of weather and delays and routines waiting elsewhere. Silence kept returning,
-      thick with everything they were not supposed to feel.  
-      <br><br>
-      In that dim room, time felt paused, as if the world had agreed not to look too
-      closely. They did not make promises. They shared only the understanding that
-      some connections exist in secret, carried carefully, like a flame that must
-      never be seen in daylight.
-    </p>
-
+  <video id="playerVideo" autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-30"></video>
+  <div class="relative z-10 max-w-3xl mx-auto mt-20 p-8 bg-black/70 backdrop-blur-xl rounded">
+    <h2 id="playerTitle" class="text-2xl mb-4 font-serif"></h2>
+    <div id="playerContent" class="space-y-4 text-gray-300 leading-relaxed"></div>
     <div class="mt-6 flex justify-between">
       <button onclick="shareReddit()" class="bg-netflix px-4 py-2 rounded">Share on Reddit</button>
       <button onclick="toggleCast()" class="underline">View Characters</button>
     </div>
-
-    <div id="cast" class="hidden mt-6 grid grid-cols-2 gap-4">
-      <div class="bg-gray-800 p-3 rounded">
-        <h3>Arjun</h3>
-        <p class="text-xs text-gray-400">Married, restrained, conflicted</p>
-      </div>
-      <div class="bg-gray-800 p-3 rounded">
-        <h3>Naina</h3>
-        <p class="text-xs text-gray-400">Engaged, observant, drawn to silence</p>
-      </div>
-    </div>
+    <div id="cast" class="hidden mt-6 grid grid-cols-2 gap-4"></div>
   </div>
 </div>
 
 <script>
-function enter() {
-  document.getElementById('ageGate').style.display = 'none';
+// --- INLINE JSON DATA (for prototype) ---
+const stories = [
+  {
+    "id": "1",
+    "title": "Brother-in-law catches my husband...",
+    "subtitle": "A forbidden holiday affair escalates...",
+    "tldr": "Thanksgiving peeping turns into full cheating...",
+    "category": "Forbidden Affairs",
+    "author": "Anonymous",
+    "readTime": "10 min",
+    "heroVideo": "https://www.w3schools.com/howto/rain.mp4",
+    "images": [
+      "https://thumbs.dreamstime.com/b/delicious-thanksgiving-dinner-table-roasted-turkey-seasonal-decor-cozy-thanksgiving-dinner-setup-roasted-turkey-425226209.jpg",
+      "https://images.stockcake.com/public/7/6/5/76522662-fca3-46a4-97f8-afc589214790_large/family-christmas-gathering-stockcake.jpg"
+    ],
+    "content": "Thanksgiving weekend, whole family crammed into our house... [full text here]"
+  },
+  {
+    "id": "2",
+    "title": "My Best Friend's Mom Seduced Me in the Pool House",
+    "subtitle": "What started as a late-night swim ended with her teaching me things...",
+    "tldr": "MILF neighbor takes advantage of college break.",
+    "category": "Holiday Confessions",
+    "author": "CollegeKid22",
+    "readTime": "8 min",
+    "heroVideo": "https://www.w3schools.com/howto/rain.mp4",
+    "images": [
+      "https://images.unsplash.com/photo-1560272564-c83b19b38190",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+    ],
+    "content": "It was the summer after freshman year... [full text here]"
+  }
+];
+
+const media = [
+  {
+    "type": "video",
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3_thumbnail.jpg?cache=1",
+    "videoURL": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/xDQISf9bWLEhMvkp-profile-picture.webp"
+  }
+];
+
+let currentStoryId = null;
+
+// --- FUNCTIONS ---
+function enter() { document.getElementById('ageGate').style.display='none'; }
+
+function buildLibrary() {
+  const library = document.getElementById('library');
+  const categories = [...new Set(stories.map(s => s.category))];
+  categories.forEach(cat => {
+    const row = document.createElement('div');
+    row.innerHTML = `<h2 class="text-xl mb-3">${cat}</h2>
+      <div class="flex gap-3 overflow-x-auto no-scrollbar">
+      ${stories.filter(s => s.category===cat).map(s =>
+        `<div class="min-w-[220px] h-[120px] bg-gray-800 rounded card p-3" onclick="openPlayer('${s.id}')">
+          <p class="text-sm font-semibold">${s.title}</p>
+          <p class="text-xs text-gray-400">${s.tldr}</p>
+        </div>`).join('')}
+      </div>`;
+    library.appendChild(row);
+  });
+
+  // Set hero banner to first story
+  const hero = stories[0];
+  currentStoryId = hero.id;
+  document.getElementById('heroTitle').innerText = hero.title;
+  document.getElementById('heroSubtitle').innerText = hero.subtitle;
+  document.getElementById('heroVideo').src = hero.heroVideo;
 }
-function openPlayer() {
+
+function openPlayer(id) {
+  const story = stories.find(s => s.id===id);
+  currentStoryId = id;
+  document.getElementById('playerTitle').innerText = story.title;
+  document.getElementById('playerContent').innerHTML = story.content.split('\n').map(p => `<p>${p}</p>`).join('');
+  document.getElementById('playerVideo').src = story.heroVideo;
+  // cast section
+  const cast = document.getElementById('cast');
+  cast.innerHTML = `
+    <div class="bg-gray-800 p-3 rounded"><h3>Character 1</h3><p class="text-xs text-gray-400">Placeholder traits</p></div>
+    <div class="bg-gray-800 p-3 rounded"><h3>Character 2</h3><p class="text-xs text-gray-400">Placeholder traits</p></div>
+  `;
   document.getElementById('player').classList.remove('hidden');
 }
-function closePlayer() {
-  document.getElementById('player').classList.add('hidden');
-}
-function toggleCast() {
-  document.getElementById('cast').classList.toggle('hidden');
-}
+
+function closePlayer() { document.getElementById('player').classList.add('hidden'); }
+
+function toggleCast() { document.getElementById('cast').classList.toggle('hidden'); }
+
 function shareReddit() {
-  const title = encodeURIComponent("A forbidden story that stayed with me...");
+  const story = stories.find(s => s.id===currentStoryId);
+  const title = encodeURIComponent("A forbidden story: "+story.title);
   const url = encodeURIComponent(window.location.href);
   window.open(`https://www.reddit.com/submit?title=${title}&url=${url}`, '_blank');
 }
-</script>
 
+// --- INIT ---
+document.addEventListener('DOMContentLoaded', buildLibrary);
+</script>
 </body>
 </html>

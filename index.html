@@ -6,27 +6,24 @@
 <title>OBSIDIAN – Netflix of Forbidden Stories</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          netflix: '#e50914',
-          dark: '#141414',
-          gold: '#c6a15b'
-        },
-        fontFamily: {
-          serif: ['Playfair Display', 'serif'],
-          body: ['Inter', 'sans-serif']
-        }
-      }
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { netflix: '#e50914', dark: '#141414', gold: '#c6a15b' },
+      fontFamily: { serif: ['Playfair Display','serif'], body: ['Inter','sans-serif'] }
     }
   }
+}
 </script>
 <style>
-  /* Hide scrollbar for horizontal rows */
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  .card:hover { transform: scale(1.05); transition: 0.3s; cursor: pointer; }
+/* Scrollbar hide for horizontal rows */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+/* Hover card scaling */
+.card:hover { transform: scale(1.05); transition: 0.3s; cursor: pointer; }
+/* Video autoplay card */
+.card video { position: absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+.card img { width:100%; height:100%; object-fit:cover; border-radius:0.5rem; }
 </style>
 </head>
 <body class="bg-dark text-white font-body">
@@ -44,22 +41,14 @@
 <header class="fixed top-0 w-full z-40 bg-black/80 backdrop-blur">
   <div class="flex items-center gap-8 px-8 py-4">
     <div class="text-netflix font-bold text-2xl font-serif">OBSIDIAN</div>
-    <nav class="flex gap-4 text-sm text-gray-300">
-      <span class="cursor-pointer hover:text-white">Home</span>
-      <span class="cursor-pointer hover:text-white">Series</span>
-      <span class="cursor-pointer hover:text-white">Stories</span>
-      <span class="cursor-pointer hover:text-white">My List</span>
-    </nav>
   </div>
 </header>
 
 <!-- HERO -->
-<section class="relative h-[70vh] mt-16">
-  <video id="heroVideo" autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-60">
-    <source src="" type="video/mp4">
-  </video>
+<section class="relative h-[60vh] mt-16">
+  <video id="heroVideo" autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-60"></video>
   <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
-  <div class="relative z-10 px-12 pt-28 max-w-xl">
+  <div class="relative z-10 px-12 pt-20 max-w-xl">
     <h1 id="heroTitle" class="text-4xl font-bold mb-4 font-serif">Loading Story...</h1>
     <p id="heroSubtitle" class="text-gray-300 mb-6">Please wait</p>
     <div class="flex gap-3">
@@ -68,26 +57,36 @@
   </div>
 </section>
 
-<!-- ROWS -->
+<!-- LIBRARY ROWS -->
 <section id="library" class="px-8 mt-8 space-y-10"></section>
 
 <!-- STORY PLAYER MODAL -->
-<div id="player" class="fixed inset-0 bg-black/90 z-50 hidden overflow-y-auto">
-  <button onclick="closePlayer()" class="absolute top-5 right-5 text-3xl">✕</button>
-  <video id="playerVideo" autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-30"></video>
-  <div class="relative z-10 max-w-3xl mx-auto mt-20 p-8 bg-black/70 backdrop-blur-xl rounded">
-    <h2 id="playerTitle" class="text-2xl mb-4 font-serif"></h2>
-    <div id="playerContent" class="space-y-4 text-gray-300 leading-relaxed"></div>
-    <div class="mt-6 flex justify-between">
-      <button onclick="shareReddit()" class="bg-netflix px-4 py-2 rounded">Share on Reddit</button>
-      <button onclick="toggleCast()" class="underline">View Characters</button>
+<div id="player" class="fixed inset-0 bg-black/95 z-50 hidden overflow-y-auto flex justify-center items-start pt-12">
+  <div class="bg-dark rounded-lg flex max-w-6xl w-full shadow-lg">
+    
+    <!-- LEFT: Character Panel -->
+    <div id="characterPanel" class="w-1/3 bg-gray-900 p-4 space-y-6 overflow-y-auto">
+      <!-- Dynamic characters here -->
     </div>
-    <div id="cast" class="hidden mt-6 grid grid-cols-2 gap-4"></div>
+
+    <!-- RIGHT: Story Content -->
+    <div class="w-2/3 p-6 relative">
+      <button onclick="closePlayer()" class="absolute top-3 right-3 text-3xl text-gray-300 hover:text-white z-20">✕</button>
+      <video id="playerVideo" autoplay muted loop class="absolute inset-0 w-full h-full object-cover opacity-20 z-0"></video>
+      <div class="relative z-10">
+        <h2 id="playerTitle" class="text-2xl font-serif mb-4"></h2>
+        <div id="playerContent" class="space-y-4 text-gray-200 leading-relaxed overflow-y-auto max-h-[80vh]"></div>
+        <div class="mt-6 flex justify-between">
+          <button onclick="shareReddit()" class="bg-netflix px-4 py-2 rounded">Share on Reddit</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <script>
-// --- INLINE JSON DATA (for prototype) ---
+// --- Inline JSON Data ---
 const stories = [
   {
     "id": "1",
@@ -107,7 +106,7 @@ const stories = [
   {
     "id": "2",
     "title": "My Best Friend's Mom Seduced Me in the Pool House",
-    "subtitle": "What started as a late-night swim ended with her teaching me things...",
+    "subtitle": "Late-night swim turns into lessons...",
     "tldr": "MILF neighbor takes advantage of college break.",
     "category": "Holiday Confessions",
     "author": "CollegeKid22",
@@ -123,34 +122,43 @@ const stories = [
 
 const media = [
   {
+    "type": "image",
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3_thumbnail.jpg",
+    "videoURL": ""
+  },
+  {
     "type": "video",
-    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3_thumbnail.jpg?cache=1",
+    "imageURL": "https://imagine-public.x.ai/imagine-public/share-videos/0dfe6abd-934d-46e0-aae5-1a33321448a3_thumbnail.jpg",
     "videoURL": "https://assets.grok.com/users/d42b3f99-8413-4a6e-987d-7262c1b9767b/xDQISf9bWLEhMvkp-profile-picture.webp"
   }
 ];
 
 let currentStoryId = null;
 
-// --- FUNCTIONS ---
+// --- Functions ---
 function enter() { document.getElementById('ageGate').style.display='none'; }
 
 function buildLibrary() {
   const library = document.getElementById('library');
-  const categories = [...new Set(stories.map(s => s.category))];
-  categories.forEach(cat => {
+  const categories = [...new Set(stories.map(s=>s.category))];
+  categories.forEach(cat=>{
     const row = document.createElement('div');
     row.innerHTML = `<h2 class="text-xl mb-3">${cat}</h2>
       <div class="flex gap-3 overflow-x-auto no-scrollbar">
-      ${stories.filter(s => s.category===cat).map(s =>
-        `<div class="min-w-[220px] h-[120px] bg-gray-800 rounded card p-3" onclick="openPlayer('${s.id}')">
-          <p class="text-sm font-semibold">${s.title}</p>
-          <p class="text-xs text-gray-400">${s.tldr}</p>
-        </div>`).join('')}
+        ${stories.filter(s=>s.category===cat).map(s=>{
+          // pick a media image/video randomly
+          const mediaItem = media[Math.floor(Math.random()*media.length)];
+          return `<div class="min-w-[220px] h-[130px] relative rounded-lg overflow-hidden card" onclick="openPlayer('${s.id}')">
+            <img src="${mediaItem.imageURL}" class="absolute inset-0 w-full h-full object-cover z-0"/>
+            ${mediaItem.videoURL?`<video muted loop class="absolute inset-0 w-full h-full object-cover opacity-0 z-10">${mediaItem.videoURL}</video>`:''}
+            <div class="absolute bottom-0 left-0 p-2 bg-black/50 w-full text-xs text-gray-200">${s.title}</div>
+          </div>`;
+        }).join('')}
       </div>`;
     library.appendChild(row);
   });
 
-  // Set hero banner to first story
+  // set hero
   const hero = stories[0];
   currentStoryId = hero.id;
   document.getElementById('heroTitle').innerText = hero.title;
@@ -159,30 +167,53 @@ function buildLibrary() {
 }
 
 function openPlayer(id) {
-  const story = stories.find(s => s.id===id);
+  const story = stories.find(s=>s.id===id);
   currentStoryId = id;
   document.getElementById('playerTitle').innerText = story.title;
-  document.getElementById('playerContent').innerHTML = story.content.split('\n').map(p => `<p>${p}</p>`).join('');
+  document.getElementById('playerContent').innerHTML = story.content.split('\n').map(p=>`<p>${p}</p>`).join('');
   document.getElementById('playerVideo').src = story.heroVideo;
-  // cast section
-  const cast = document.getElementById('cast');
-  cast.innerHTML = `
-    <div class="bg-gray-800 p-3 rounded"><h3>Character 1</h3><p class="text-xs text-gray-400">Placeholder traits</p></div>
-    <div class="bg-gray-800 p-3 rounded"><h3>Character 2</h3><p class="text-xs text-gray-400">Placeholder traits</p></div>
-  `;
+
+  // left character panel
+  const charPanel = document.getElementById('characterPanel');
+  charPanel.innerHTML = '';
+  // For prototype, pick two random media items as characters
+  const chars = [media[Math.floor(Math.random()*media.length)], media[Math.floor(Math.random()*media.length)]];
+  chars.forEach((c,i)=>{
+    charPanel.innerHTML += `
+      <div class="bg-gray-800 rounded p-2 flex flex-col items-center">
+        <img src="${c.imageURL}" class="w-full h-40 object-cover rounded mb-2"/>
+        <h3 class="text-gold font-serif">Character ${i+1}</h3>
+        <p class="text-xs text-gray-400">Traits placeholder</p>
+      </div>`;
+  });
+
   document.getElementById('player').classList.remove('hidden');
 }
 
 function closePlayer() { document.getElementById('player').classList.add('hidden'); }
 
-function toggleCast() { document.getElementById('cast').classList.toggle('hidden'); }
-
 function shareReddit() {
-  const story = stories.find(s => s.id===currentStoryId);
+  const story = stories.find(s=>s.id===currentStoryId);
   const title = encodeURIComponent("A forbidden story: "+story.title);
   const url = encodeURIComponent(window.location.href);
   window.open(`https://www.reddit.com/submit?title=${title}&url=${url}`, '_blank');
 }
+
+// Hover video logic
+document.addEventListener('mouseover', e=>{
+  if(e.target.closest('.card') && e.target.closest('.card').querySelector('video')){
+    const vid = e.target.closest('.card').querySelector('video');
+    vid.style.opacity=1;
+    vid.play();
+  }
+});
+document.addEventListener('mouseout', e=>{
+  if(e.target.closest('.card') && e.target.closest('.card').querySelector('video')){
+    const vid = e.target.closest('.card').querySelector('video');
+    vid.style.opacity=0;
+    vid.pause();
+  }
+});
 
 // --- INIT ---
 document.addEventListener('DOMContentLoaded', buildLibrary);
